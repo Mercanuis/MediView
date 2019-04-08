@@ -1,37 +1,41 @@
+package data
+
 type bloodPressure struct {
-  Systolic int
-  Distolic int
+	Systolic  int
+	Diastolic int
 }
 
 //Vitals is a representation of a patients vital signs
 type Vitals struct {
-  bloodPressure
-  Pulse   int    //BPM
-  Glucose int    //mmol/L
+	Pressure bloodPressure
+	Pulse    int //BPM
+	Glucose  int //mmol/L
 }
 
 //NewVitals returns a new Vitals struct
 func NewVitals(sys, dys, pulse, glu int) Vitals {
-  return Vitals{
-    bloodPressure{
-      Systolic: sys,
-      Distolic: dys,
-    },
-    Pulse: pulse,
-    Glucose: glu,
-  }
+	return Vitals{
+		Pressure: bloodPressure{
+			Systolic:  sys,
+			Diastolic: dys,
+		},
+		Pulse:   pulse,
+		Glucose: glu,
+	}
 }
 
 //Patient represents a patient's information in the system
 type Patient struct {
-  Name  string
-  Age   int
+	Id   int64
+	Name string
+	Age  int
 }
 
-func NewPatient(i int64, n string, a int) Patient {
-  return Patient {
-    id: i,
-    name: n,
-    age: a,
-  }
+//NewPatient returns a new Patient struct
+func NewPatient(n string, i int64, a int) Patient {
+	return Patient{
+		Id:   i,
+		Name: n,
+		Age:  a,
+	}
 }
