@@ -19,6 +19,10 @@ func NewService() Service {
 	}
 }
 
+func (s *Service) OnNewRecord(pid uuid.UUID, v model.Vitals) error {
+	return s.AddPatientRecord(pid, v)
+}
+
 //AddPatientRecord adds a new Record to the data store or returns an error
 func (s *Service) AddPatientRecord(pid uuid.UUID, v model.Vitals) error {
 	patient := s.data.GetPatient(pid)

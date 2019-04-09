@@ -47,9 +47,9 @@ func (m *MemCache) AddPatient(name string, age int) (uuid.UUID, error) {
 		return uuid.UUID{}, err
 	}
 
+	//TODO: is this possible with UUID? Will we ever reach this point?
 	if _, exists := m.PatientList.patients[key]; exists {
 		//key existed already
-		//TODO: is this possible with UUID? Will we ever reach this point?
 		log.Print("Existing key")
 		return key, nil
 	}
