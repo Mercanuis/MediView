@@ -2,6 +2,7 @@ package data
 
 import (
 	"MediView/data/model"
+	"log"
 	"sync"
 
 	"github.com/pkg/errors"
@@ -10,14 +11,17 @@ import (
 )
 
 type (
+	//PatientCache represents a list of Patients
 	PatientCache struct {
 		patients map[uuid.UUID]model.Patient
 	}
 
+	//RecordCache represents a list of Records
 	RecordCache struct {
 		records map[uuid.UUID]model.Record
 	}
 
+	//MemCache represents a data store of Patients and Records
 	MemCache struct {
 		sync.RWMutex
 		PatientList PatientCache
@@ -25,6 +29,7 @@ type (
 	}
 )
 
+//NewMemCache initializes a new MemCache
 func NewMemCache() DAO {
 	return &MemCache{
 		PatientList: PatientCache{
@@ -40,6 +45,13 @@ func (m *MemCache) AddPatient(name string, age int) (uuid.UUID, error) {
 	key, err := m.createKey()
 	if err != nil {
 		return uuid.UUID{}, err
+	}
+
+	if _, exists := m.PatientList.patients[key]; exists {
+		//key existed already
+		//TODO: is this possible with UUID? Will we ever reach this point?
+		log.Print("Existing key")
+		return key, nil
 	}
 
 	m.Lock()
