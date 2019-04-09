@@ -32,6 +32,9 @@ type DAO interface {
 	//id - the UUID of the Record
 	GetRecord(id uuid.UUID) model.Record
 
+	//Gets all records from the data store
+	GetRecords() map[uuid.UUID]model.Record
+
 	//Removes a Record from the data store
 	//id - the UUID of the Record
 	DeleteRecord(id uuid.UUID)

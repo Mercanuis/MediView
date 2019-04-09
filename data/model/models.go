@@ -3,15 +3,15 @@ package model
 import "github.com/google/uuid"
 
 type bloodPressure struct {
-	Systolic  int
-	Diastolic int
+	Systolic  int `json:"systolic"`
+	Diastolic int `json:"diastolic"`
 }
 
 //Vitals is a representation of a patients vital signs
 type Vitals struct {
-	Pressure bloodPressure
-	Pulse    int //BPM
-	Glucose  int //mmol/L
+	Pressure bloodPressure `json:"pressure"`
+	Pulse    int           `json:"pulse"`
+	Glucose  int           `json:"glucose"`
 }
 
 //NewVitals returns a new Vitals struct
@@ -28,9 +28,9 @@ func NewVitals(sys, dys, pulse, glu int) Vitals {
 
 //Patient represents a patient's information in the system
 type Patient struct {
-	Id   uuid.UUID
-	Name string
-	Age  int
+	Id   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
+	Age  int       `json:"age"`
 }
 
 //NewPatient returns a new Patient struct
@@ -45,8 +45,8 @@ func NewPatient(i uuid.UUID, n string, a int) Patient {
 //Record represents a medical record comprised of a Patient and their Vitals
 //Patients are not expected to change once created but Vitals can change constantly
 type Record struct {
-	Patient Patient
-	Vitals  Vitals
+	Patient Patient `json:"patient"`
+	Vitals  Vitals  `json:"vitals"`
 }
 
 //NewRecord returns a new Record struct

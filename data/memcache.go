@@ -16,7 +16,7 @@ type (
 		patients map[uuid.UUID]model.Patient
 	}
 
-	//RecordCache represents a list of Records
+	//RecordCache represents a list of the latest Records
 	RecordCache struct {
 		records map[uuid.UUID]model.Record
 	}
@@ -89,6 +89,10 @@ func (m *MemCache) GetPatient(id uuid.UUID) model.Patient {
 
 func (m *MemCache) GetRecord(id uuid.UUID) model.Record {
 	return m.RecordsList.records[id]
+}
+
+func (m *MemCache) GetRecords() map[uuid.UUID]model.Record {
+	return m.RecordsList.records
 }
 
 func (m *MemCache) DeletePatient(id uuid.UUID) {
