@@ -1,21 +1,38 @@
 package data
 
+import (
+	"MediView/data/model"
+
+	"github.com/google/uuid"
+)
+
 //The Data Access Object(DAO) interface is meant to be an implementation of
 //the application's data needs. The idea behind putting it behind an interface
 //is because it allows for multiple implementations to be used to serve the
 //client's needs.
-//
-//Attempts to be as generic as possible, and allow for multiple types
-//to implement the interface and not be worried about type
 type DAO interface {
-	//Adds a record to the data store
-	//id - the unique key that is associated with the interface
-	//data - the data object to add to the data store
-	//TODO: look into using the UUID package instead
-	Add(id int64, data interface{}) error
+	//Adds a Patient to the data store
+	//p - the Patient to add to the data store
+	AddPatient(name string, age int) (uuid.UUID, error)
 
-	//Removes a record from the data store
-	//id - the unique key that is associated with the interface
-	//TODO: Look into using the UUID package instead
-	Delete(id int64) error
+	//Gets a Patient from the data store
+	//id - the UUID of the Patient
+	GetPatient(id uuid.UUID) model.Patient
+
+	//Removes a Patient from the data store
+	//id - the UUID of the Patient
+	DeletePatient(id uuid.UUID)
+
+	//Adds a Record to the data store
+	//p - the Patient associated with the Record
+	//v - the Vitals associated with the Record
+	AddRecord(p model.Patient, v model.Vitals) (uuid.UUID, error)
+
+	//Gets a Record from the data store
+	//id - the UUID of the Record
+	GetRecord(id uuid.UUID) model.Record
+
+	//Removes a Record from the data store
+	//id - the UUID of the Record
+	DeleteRecord(id uuid.UUID)
 }

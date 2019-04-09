@@ -3,6 +3,8 @@ package model
 import (
 	"testing"
 
+	"github.com/google/uuid"
+
 	"gotest.tools/assert"
 )
 
@@ -24,12 +26,12 @@ func TestVitals(t *testing.T) {
 
 func TestPatient(t *testing.T) {
 	v := Patient{
-		Id:   1234567,
+		Id:   uuid.New(),
 		Name: "Joe",
 		Age:  30,
 	}
 
-	assert.Equal(t, int64(1234567), v.Id)
+	t.Logf("Created UUID: %v", v.Id)
 	assert.Equal(t, "Joe", v.Name)
 	assert.Equal(t, 30, v.Age)
 }
@@ -37,7 +39,7 @@ func TestPatient(t *testing.T) {
 func TestRecord(t *testing.T) {
 	r := Record{
 		Patient: Patient{
-			Id:   1234567,
+			Id:   uuid.New(),
 			Age:  34,
 			Name: "Joan",
 		},
@@ -51,6 +53,9 @@ func TestRecord(t *testing.T) {
 		},
 	}
 
+	t.Logf("Created UUID: %v", r.Patient.Id)
 	assert.Equal(t, "Joan", r.Patient.Name)
+	assert.Equal(t, 34, r.Patient.Age)
+	assert.Equal(t, 123, r.Vitals.Pressure.Systolic)
 	assert.Equal(t, 60, r.Vitals.Glucose)
 }

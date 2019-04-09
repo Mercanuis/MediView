@@ -1,5 +1,7 @@
 package model
 
+import "github.com/google/uuid"
+
 type bloodPressure struct {
 	Systolic  int
 	Diastolic int
@@ -26,13 +28,13 @@ func NewVitals(sys, dys, pulse, glu int) Vitals {
 
 //Patient represents a patient's information in the system
 type Patient struct {
-	Id   int64
+	Id   uuid.UUID
 	Name string
 	Age  int
 }
 
 //NewPatient returns a new Patient struct
-func NewPatient(n string, i int64, a int) Patient {
+func NewPatient(i uuid.UUID, n string, a int) Patient {
 	return Patient{
 		Id:   i,
 		Name: n,
