@@ -1,4 +1,4 @@
-package data
+package model
 
 type bloodPressure struct {
 	Systolic  int
@@ -37,5 +37,20 @@ func NewPatient(n string, i int64, a int) Patient {
 		Id:   i,
 		Name: n,
 		Age:  a,
+	}
+}
+
+//Record represents a medical record comprised of a Patient and their Vitals
+//Patients are not expected to change once created but Vitals can change constantly
+type Record struct {
+	Patient Patient
+	Vitals  Vitals
+}
+
+//NewRecord returns a new Record struct
+func NewRecord(p Patient, v Vitals) Record {
+	return Record{
+		Patient: p,
+		Vitals:  v,
 	}
 }
