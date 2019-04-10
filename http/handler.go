@@ -49,6 +49,37 @@ func (s *Server) addPatientHandler() http.Handler {
 	})
 }
 
+func (s *Server) addRecordHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+
+		decoder := json.NewDecoder(r.Body)
+		var record dto.RecordAddRequest
+		err := decoder.Decode(&record)
+		if err != nil {
+			//TODO: Determine how to handle error
+		}
+
+		patient, err := s.MediService.AddRecord(
+			record.Id,
+			record.Systolic,
+			record.Diastolic,
+			record.Pulse,
+			record.Glucose)
+		if err != nil {
+			//TODO: Determine how to handle error
+		}
+
+		if err := writeJSON(w, http.StatusOK, patient); err != nil {
+			//TODO: Figure out what to do with error
+		}
+		_, _ = fmt.Fprint(os.Stdout, "Success!")
+	})
+}
+
 func writeJSON(w http.ResponseWriter, code int, i interface{}) error {
 	setContentType(w, code, "application/json; charset=UTF-8")
 	if err := json.NewEncoder(w).Encode(i); err != nil {

@@ -4,6 +4,8 @@ import (
 	"MediView/data"
 	"MediView/data/model"
 
+	"github.com/pkg/errors"
+
 	"github.com/google/uuid"
 )
 
@@ -38,8 +40,13 @@ func (s *Service) AddPatient(name string, age int) error {
 	return nil
 }
 
-//AddRecord adds a new record
-func (s *Service) AddRecord(pid uuid.UUID, sys, dys, pul, glu int) error {
+//AddRecord adds a new record for an existing Patient
+func (s *Service) AddRecord(pid uuid.UUID, sys, dys, pul, glu int) (*model.Patient, error) {
 	//TODO: Implement
-	return nil
+	vitals := model.NewVitals(sys, dys, pul, glu)
+	patient, err := s.data.AddRecord(pid, vitals)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to add a record for patient")
+	}
+	return patient, nil
 }
