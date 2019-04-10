@@ -48,7 +48,7 @@ func TestGetRecordsHandler(t *testing.T) {
 
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
-			testService := service.NewService(mocks.DaoMock{
+			testService := service.NewService(&mocks.DaoMock{
 				GetPatientsMock: tc.GetPatientMock,
 			})
 			server := testHTTPServer(t, testService)
@@ -94,7 +94,7 @@ func TestAddPatientHandler(t *testing.T) {
 
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
-			testService := service.NewService(mocks.DaoMock{
+			testService := service.NewService(&mocks.DaoMock{
 				AddPatientMock: tc.AddPatientMock,
 			})
 			server := testHTTPServer(t, testService)

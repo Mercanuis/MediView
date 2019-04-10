@@ -32,6 +32,14 @@ func NewMemCache() DAO {
 	}
 }
 
+func (m *MemCache) GetPatient(id uuid.UUID) (*model.Patient, error) {
+	pat, ok := m.PatientList.patients[id]
+	if !ok {
+		return nil, errors.New("invalid key")
+	}
+	return &pat, nil
+}
+
 func (m *MemCache) AddPatient(name string, age int) (uuid.UUID, error) {
 	key, err := m.createKey()
 	if err != nil {
@@ -62,10 +70,6 @@ func (m *MemCache) createKey() (key uuid.UUID, err error) {
 	return key, err
 }
 
-func (m *MemCache) GetPatient(id uuid.UUID) model.Patient {
-	return m.PatientList.patients[id]
-}
-
 func (m *MemCache) GetPatients() model.PatientRecords {
 	var arr []model.Patient
 	for _, v := range m.PatientList.patients {
@@ -79,4 +83,18 @@ func (m *MemCache) GetPatients() model.PatientRecords {
 
 func (m *MemCache) DeletePatient(id uuid.UUID) {
 	delete(m.PatientList.patients, id)
+}
+
+func (m *MemCache) AddRecord(pid uuid.UUID, vitals model.Vitals) (*model.Patient, error) {
+	pat, ok := m.PatientList.patients[pid]
+	if !ok {
+		return nil, errors.New("invalid key")
+	}
+
+	pat.Vitals = vitals
+
+	m.Lock()
+	defer m.Unlock()
+	m.PatientList.patients[pid] = pat
+	return &pat, nil
 }
