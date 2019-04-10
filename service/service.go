@@ -11,9 +11,9 @@ type Service struct {
 }
 
 //NewService initializes a new Service
-func NewService() Service {
+func NewService(dao data.DAO) Service {
 	return Service{
-		data: data.NewMemCache(),
+		data: dao,
 	}
 }
 
