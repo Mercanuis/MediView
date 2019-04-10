@@ -7,7 +7,7 @@ type bloodPressure struct {
 	Diastolic int `json:"diastolic"`
 }
 
-//Vitals is a representation of a patients vital signs
+//Vitals is a representation of a patients current vital signs
 type Vitals struct {
 	Pressure bloodPressure `json:"pressure"`
 	Pulse    int           `json:"pulse"`
@@ -28,9 +28,10 @@ func NewVitals(sys, dys, pulse, glu int) Vitals {
 
 //Patient represents a patient's information in the system
 type Patient struct {
-	Id   uuid.UUID `json:"id"`
-	Name string    `json:"name"`
-	Age  int       `json:"age"`
+	Id     uuid.UUID `json:"id"`
+	Name   string    `json:"name"`
+	Age    int       `json:"age"`
+	Vitals Vitals    `json:"vitals"`
 }
 
 //NewPatient returns a new Patient struct
@@ -42,17 +43,7 @@ func NewPatient(i uuid.UUID, n string, a int) Patient {
 	}
 }
 
-//Record represents a medical record comprised of a Patient and their Vitals
-//Patients are not expected to change once created but Vitals can change constantly
-type Record struct {
-	Patient Patient `json:"patient"`
-	Vitals  Vitals  `json:"vitals"`
-}
-
-//NewRecord returns a new Record struct
-func NewRecord(p Patient, v Vitals) Record {
-	return Record{
-		Patient: p,
-		Vitals:  v,
-	}
+//PatientRecords represents a series of Patients
+type PatientRecords struct {
+	Records []Patient `json:"records"`
 }

@@ -2,6 +2,7 @@ package service
 
 import (
 	"MediView/data"
+	"MediView/data/model"
 )
 
 //Service represents the service logic
@@ -17,7 +18,7 @@ func NewService() Service {
 }
 
 //GetLatestRecords returns the latest records
-func (s *Service) GetLatestRecords() {
-	_ = s.data.GetRecords()
-	//TODO: Work here first and get the get working
+func (s *Service) GetLatestRecords() []model.Patient {
+	patRecs := s.data.GetPatients()
+	return patRecs
 }

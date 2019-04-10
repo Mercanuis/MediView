@@ -19,23 +19,10 @@ type DAO interface {
 	//id - the UUID of the Patient
 	GetPatient(id uuid.UUID) model.Patient
 
+	//Gets the list of Patients from the data store
+	GetPatients() []model.Patient
+
 	//Removes a Patient from the data store
 	//id - the UUID of the Patient
 	DeletePatient(id uuid.UUID)
-
-	//Adds a Record to the data store
-	//p - the Patient associated with the Record
-	//v - the Vitals associated with the Record
-	AddRecord(p model.Patient, v model.Vitals) (uuid.UUID, error)
-
-	//Gets a Record from the data store
-	//id - the UUID of the Record
-	GetRecord(id uuid.UUID) model.Record
-
-	//Gets all records from the data store
-	GetRecords() map[uuid.UUID]model.Record
-
-	//Removes a Record from the data store
-	//id - the UUID of the Record
-	DeleteRecord(id uuid.UUID)
 }
