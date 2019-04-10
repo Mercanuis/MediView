@@ -26,25 +26,22 @@ func TestGetRecordsHandler(t *testing.T) {
 	cases := map[string]struct {
 		httpMethod     string
 		errorCode      int
-		GetPatientMock func() []model.Patient
+		GetPatientMock func() model.PatientRecords
 	}{
 		"GET": {
 			httpMethod: http.MethodGet,
 			errorCode:  200,
-			GetPatientMock: func() []model.Patient {
-				return []model.Patient{{
-					uuid.New(),
-					"Joe",
-					30,
-					model.NewVitals(128, 78, 78, 60),
-				}}
+			GetPatientMock: func() model.PatientRecords {
+				return model.PatientRecords{
+					Records: []model.Patient{model.NewPatient(uuid.New(), "Joe", 33)},
+				}
 			},
 		},
 		"PUT": {
 			httpMethod: http.MethodPut,
 			errorCode:  405,
-			GetPatientMock: func() []model.Patient {
-				return []model.Patient{}
+			GetPatientMock: func() model.PatientRecords {
+				return model.PatientRecords{}
 			},
 		},
 	}

@@ -9,11 +9,11 @@ import (
 type DaoMock struct {
 	AddPatientMock    func(name string, age int) (uuid.UUID, error)
 	GetPatientMock    func(id uuid.UUID) model.Patient
-	GetPatientsMock   func() []model.Patient
+	GetPatientsMock   func() model.PatientRecords
 	DeletePatientMock func(id uuid.UUID)
 }
 
-func (d DaoMock) GetPatients() []model.Patient {
+func (d DaoMock) GetPatients() model.PatientRecords {
 	return d.GetPatientsMock()
 }
 

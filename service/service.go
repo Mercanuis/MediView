@@ -18,7 +18,12 @@ func NewService(dao data.DAO) Service {
 }
 
 //GetLatestRecords returns the latest records
-func (s *Service) GetLatestRecords() []model.Patient {
-	patRecs := s.data.GetPatients()
-	return patRecs
+func (s *Service) GetLatestRecords() model.PatientRecords {
+	//TODO: keep for debugging purposes, but afterward clean this up
+
+	//key, _ := s.data.AddPatient("Joey", 33)
+	//patient := s.data.GetPatient(key)
+	//patient.Vitals = model.NewVitals(128, 78, 70, 45)
+	//patRecs := s.data.GetPatients()
+	return s.data.GetPatients()
 }

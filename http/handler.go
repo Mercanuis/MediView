@@ -1,9 +1,10 @@
 package http
 
 import (
-	"MediView/data/model"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/pkg/errors"
 )
@@ -16,13 +17,10 @@ func (s *Server) getRecordsHandler() http.Handler {
 		}
 
 		records := s.MediService.GetLatestRecords()
-		patRecords := model.PatientRecords{}
-		for _, i := range records {
-			_ = append(patRecords.Records, i)
-		}
-		if err := writeJSON(w, http.StatusOK, patRecords); err != nil {
+		if err := writeJSON(w, http.StatusOK, records); err != nil {
 			//TODO: Figure out what to do with error
 		}
+		_, _ = fmt.Fprint(os.Stdout, "Success!")
 	})
 }
 

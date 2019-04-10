@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-//Server represents the HTTP server
+//Server represents the HTTP main
 type Server struct {
 	//Application specific logic and services
 	MediService service.Service
@@ -50,7 +50,7 @@ func (s *Server) Serve(ln net.Listener) error {
 	return nil
 }
 
-// GracefulStop gracefully shuts down the server without interrupting any
+// GracefulStop gracefully shuts down the main without interrupting any
 // active connections. If any returns error.
 func (s *Server) GracefulStop(ctx context.Context) error {
 	var err error

@@ -66,12 +66,15 @@ func (m *MemCache) GetPatient(id uuid.UUID) model.Patient {
 	return m.PatientList.patients[id]
 }
 
-func (m *MemCache) GetPatients() []model.Patient {
+func (m *MemCache) GetPatients() model.PatientRecords {
 	var arr []model.Patient
 	for _, v := range m.PatientList.patients {
 		arr = append(arr, v)
 	}
-	return arr
+
+	return model.PatientRecords{
+		Records: arr,
+	}
 }
 
 func (m *MemCache) DeletePatient(id uuid.UUID) {

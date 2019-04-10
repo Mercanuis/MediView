@@ -20,7 +20,7 @@ type DAO interface {
 	GetPatient(id uuid.UUID) model.Patient
 
 	//Gets the list of Patients from the data store
-	GetPatients() []model.Patient
+	GetPatients() model.PatientRecords
 
 	//Removes a Patient from the data store
 	//id - the UUID of the Patient
