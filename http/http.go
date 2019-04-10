@@ -32,6 +32,7 @@ func New(s service.Service) (*Server, error) {
 
 func (s *Server) registerHandlers() {
 	s.mux.Handle("/getRecords", s.getRecordsHandler())
+	s.mux.Handle("/addPatient", s.addPatientHandler())
 }
 
 // Serve starts accept requests from the given listener. If any returns error.

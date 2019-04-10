@@ -62,3 +62,49 @@ func TestGetRecordsHandler(t *testing.T) {
 		})
 	}
 }
+
+func TestAddPatientHandler(t *testing.T) {
+	cases := map[string]struct {
+		httpMethod     string
+		errorCode      int
+		AddPatientMock func(name string, age int) (uuid.UUID, error)
+	}{
+		"GET": {
+			httpMethod: http.MethodGet,
+			errorCode:  405,
+			AddPatientMock: func(name string, age int) (uuid.UUID, error) {
+				return uuid.UUID{}, nil
+			},
+		},
+		"POST": {
+			httpMethod: http.MethodPost,
+			errorCode:  200,
+			AddPatientMock: func(name string, age int) (uuid.UUID, error) {
+				return uuid.New(), nil
+			},
+		},
+		"PUT": {
+			httpMethod: http.MethodPut,
+			errorCode:  405,
+			AddPatientMock: func(name string, age int) (uuid.UUID, error) {
+				return uuid.UUID{}, nil
+			},
+		},
+	}
+
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			testService := service.NewService(mocks.DaoMock{
+				AddPatientMock: tc.AddPatientMock,
+			})
+			server := testHTTPServer(t, testService)
+
+			handlerFunc := server.addPatientHandler()
+			rr := httptest.NewRecorder()
+			handlerFunc.ServeHTTP(rr, httptest.NewRequest(tc.httpMethod, "/addPatient", nil))
+
+			resp := rr.Result()
+			assert.Equal(t, resp.StatusCode, tc.errorCode, "response: %v, tc: %v", resp.StatusCode, tc.errorCode)
+		})
+	}
+}

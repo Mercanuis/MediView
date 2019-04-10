@@ -27,3 +27,11 @@ func (s *Service) GetLatestRecords() model.PatientRecords {
 	//patRecs := s.data.GetPatients()
 	return s.data.GetPatients()
 }
+
+func (s *Service) AddPatient(name string, age int) error {
+	_, err := s.data.AddPatient(name, age)
+	if err != nil {
+		return err
+	}
+	return nil
+}
