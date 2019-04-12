@@ -23,11 +23,6 @@ func NewService(dao data.DAO) Service {
 
 //GetLatestRecords returns the latest records
 func (s *Service) GetLatestRecords() model.PatientRecords {
-	//TODO: keep for debugging purposes, but afterward clean this up
-	//key, _ := s.data.AddPatient("Joey", 33)
-	//patient := s.data.GetPatient(key)
-	//patient.Vitals = model.NewVitals(128, 78, 70, 45)
-	//patRecs := s.data.GetPatients()
 	return s.data.GetPatients()
 }
 
@@ -35,14 +30,13 @@ func (s *Service) GetLatestRecords() model.PatientRecords {
 func (s *Service) AddPatient(name string, age int) error {
 	_, err := s.data.AddPatient(name, age)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to add patient to system")
 	}
 	return nil
 }
 
 //AddRecord adds a new record for an existing Patient
 func (s *Service) AddRecord(pid uuid.UUID, sys, dys, pul, glu int) (*model.Patient, error) {
-	//TODO: Implement
 	vitals := model.NewVitals(sys, dys, pul, glu)
 	patient, err := s.data.AddRecord(pid, vitals)
 	if err != nil {
@@ -53,4 +47,12 @@ func (s *Service) AddRecord(pid uuid.UUID, sys, dys, pul, glu int) (*model.Patie
 
 func (s *Service) GetHistories() model.PatientVitalHistories {
 	return s.data.GetPatientHistories()
+}
+
+func (s *Service) ResetHistory() {
+	s.data.ResetPatientHistory()
+}
+
+func (s *Service) DeleteHistory() {
+	s.data.DeleteAllHistory()
 }

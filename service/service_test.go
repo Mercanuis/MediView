@@ -1,6 +1,7 @@
 package service
 
 import (
+	"MediView/data"
 	"testing"
 
 	"gotest.tools/assert"
@@ -8,7 +9,7 @@ import (
 
 func TestGetRecords(t *testing.T) {
 	//Initialize service
-	s := NewService()
+	s := NewService(data.NewMemCache())
 	key1, err := s.data.AddPatient("Joe", 30)
 	if err != nil {
 		t.Fatalf("Failed to create patient 1: %v", err)
@@ -29,7 +30,7 @@ func TestGetRecords(t *testing.T) {
 	found2 := false
 	found3 := false
 
-	for _, i := range patients {
+	for _, i := range patients.Records {
 		if i.Id == key1 {
 			if i.Name == "Joe" && i.Age == 30 {
 				found1 = true

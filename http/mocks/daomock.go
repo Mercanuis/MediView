@@ -7,11 +7,14 @@ import (
 )
 
 type DaoMock struct {
-	GetPatientMock    func(id uuid.UUID) (*model.Patient, error)
-	AddPatientMock    func(name string, age int) (uuid.UUID, error)
-	GetPatientsMock   func() model.PatientRecords
-	DeletePatientMock func(id uuid.UUID)
-	AddRecordMock     func(pid uuid.UUID, vitals model.Vitals) (*model.Patient, error)
+	GetPatientMock          func(id uuid.UUID) (*model.Patient, error)
+	AddPatientMock          func(name string, age int) (uuid.UUID, error)
+	GetPatientsMock         func() model.PatientRecords
+	DeletePatientMock       func(id uuid.UUID)
+	AddRecordMock           func(pid uuid.UUID, vitals model.Vitals) (*model.Patient, error)
+	GetPatientHistoriesMock func() model.PatientVitalHistories
+	ResetPatientHistoryMock func()
+	DeleteAllHistoryMock    func()
 }
 
 func (d *DaoMock) GetPatients() model.PatientRecords {
@@ -32,4 +35,16 @@ func (d *DaoMock) DeletePatient(id uuid.UUID) {
 
 func (d *DaoMock) AddRecord(pid uuid.UUID, vitals model.Vitals) (*model.Patient, error) {
 	return d.AddRecordMock(pid, vitals)
+}
+
+func (d *DaoMock) GetPatientHistories() model.PatientVitalHistories {
+	return d.GetPatientHistoriesMock()
+}
+
+func (d *DaoMock) ResetPatientHistory() {
+	d.ResetPatientHistoryMock()
+}
+
+func (d *DaoMock) DeleteAllHistory() {
+	d.DeleteAllHistoryMock()
 }
