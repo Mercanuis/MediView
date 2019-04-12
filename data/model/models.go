@@ -1,6 +1,8 @@
 package model
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type bloodPressure struct {
 	Systolic  int `json:"systolic"`
@@ -46,4 +48,40 @@ func NewPatient(i uuid.UUID, n string, a int) Patient {
 //PatientRecords represents a series of Patients
 type PatientRecords struct {
 	Records []Patient `json:"records"`
+}
+
+//PatientVitalHistory represents an aggregation of a Patient's vitals
+type PatientVitalHistory struct {
+	Id       uuid.UUID     `json:"id"`
+	BPA      bloodPressure `json:"avgBloodPressure"`
+	bpaCount int
+	PAvg     int `json:"avgPulse"`
+	pCount   int
+	GAvg     int `json:"avgGlucose"`
+	gCount   int
+}
+
+//NewPatientVitalHistory returns a new instance of PatientsVitalHistory
+func NewPatientVitalHistory(pid uuid.UUID, bpa bloodPressure, pul int, glu int) PatientVitalHistory {
+	return PatientVitalHistory{
+		Id:       pid,
+		BPA:      bpa,
+		bpaCount: 1,
+		PAvg:     pul,
+		pCount:   1,
+		GAvg:     glu,
+		gCount:   1,
+	}
+}
+
+func (h *PatientVitalHistory) updateHistory(sys, dys, pul, glu int) {
+	h.bpaCount++
+	h.BPA.Systolic = (h.BPA.Systolic + sys) / h.bpaCount
+	h.BPA.Diastolic = (h.BPA.Diastolic + dys) / h.bpaCount
+
+	h.pCount++
+	h.PAvg = (h.PAvg + pul) / h.pCount
+
+	h.gCount++
+	h.GAvg = (h.GAvg + glu) / h.gCount
 }
