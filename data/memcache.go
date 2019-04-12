@@ -123,3 +123,15 @@ func (m *MemCache) GetPatientHistories() model.PatientVitalHistories {
 		Histories: arr,
 	}
 }
+
+func (m *MemCache) ResetPatientHistory() {
+	for k := range m.PatientHistory {
+		m.PatientHistory[k] = model.PatientVitalHistory{}
+	}
+}
+
+func (m *MemCache) DeleteAllHistory() {
+	for k := range m.PatientHistory {
+		delete(m.PatientHistory, k)
+	}
+}

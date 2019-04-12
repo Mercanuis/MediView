@@ -4,14 +4,14 @@ import (
 	"github.com/google/uuid"
 )
 
-type bloodPressure struct {
+type BloodPressure struct {
 	Systolic  int `json:"systolic"`
 	Diastolic int `json:"diastolic"`
 }
 
 //Vitals is a representation of a patients current vital signs
 type Vitals struct {
-	Pressure bloodPressure `json:"pressure"`
+	Pressure BloodPressure `json:"pressure"`
 	Pulse    int           `json:"pulse"`
 	Glucose  int           `json:"glucose"`
 }
@@ -19,7 +19,7 @@ type Vitals struct {
 //NewVitals returns a new Vitals struct
 func NewVitals(sys, dys, pulse, glu int) Vitals {
 	return Vitals{
-		Pressure: bloodPressure{
+		Pressure: BloodPressure{
 			Systolic:  sys,
 			Diastolic: dys,
 		},
@@ -53,7 +53,7 @@ type PatientRecords struct {
 //PatientVitalHistory represents an aggregation of a Patient's vitals
 type PatientVitalHistory struct {
 	Id       uuid.UUID     `json:"id"`
-	BPA      bloodPressure `json:"avgBloodPressure"`
+	BPA      BloodPressure `json:"avgBloodPressure"`
 	PAvg     int           `json:"avgPulse"`
 	GAvg     int           `json:"avgGlucose"`
 	bpaCount int
@@ -66,7 +66,7 @@ type PatientVitalHistories struct {
 }
 
 //NewPatientVitalHistory returns a new instance of PatientsVitalHistory
-func NewPatientVitalHistory(pid uuid.UUID, bpa bloodPressure, pul int, glu int) PatientVitalHistory {
+func NewPatientVitalHistory(pid uuid.UUID, bpa BloodPressure, pul int, glu int) PatientVitalHistory {
 	return PatientVitalHistory{
 		Id:       pid,
 		BPA:      bpa,
@@ -78,6 +78,7 @@ func NewPatientVitalHistory(pid uuid.UUID, bpa bloodPressure, pul int, glu int) 
 	}
 }
 
+//UpdateHistory updates the calling PatientVitalHistory
 func (h *PatientVitalHistory) UpdateHistory(sys, dys, pul, glu int) {
 	h.bpaCount++
 	h.BPA.Systolic = (h.BPA.Systolic + sys) / h.bpaCount

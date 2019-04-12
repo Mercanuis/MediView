@@ -34,4 +34,12 @@ type DAO interface {
 
 	//Returned the associated history for the Patients
 	GetPatientHistories() model.PatientVitalHistories
+
+	//Resets all Patient history
+	//This should be called once every hour (60 minutes)
+	ResetPatientHistory()
+
+	//Removes all PatientVitalsHistory from the data store
+	//This should be called once a day (24 hours)
+	DeleteAllHistory()
 }

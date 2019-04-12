@@ -3,10 +3,11 @@
 //the application should work with and manipulate as needed to
 //perform the services necessary for the application.
 //
-//Subpackage models contains the Data Access Objects (DAO) of the
+//Subpackage model contains the Data Access Objects (DAO) of the
 //system, with the relevant data types and their respective fields.
 //
 //dao.go is an interface that defines the methods that are allowed
 //by the data package to access the data layers, and should be used
 //by an initialized DAO in the application.
+//TODO: Memcache as an HTTP Servcie works now. Next, implement RabbitMQ to work via message queue
 package data
