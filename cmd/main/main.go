@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/streadway/amqp"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -20,6 +21,7 @@ const (
 )
 
 func main() {
+	_, _ = amqp.Dial("todo")
 	os.Exit(realMain(os.Args))
 }
 
