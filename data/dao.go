@@ -27,5 +27,8 @@ type DAO interface {
 	//id - the UUID of the Patient
 	DeletePatient(id uuid.UUID)
 
+	//Adds a Record for the associated Patient
+	//If the Patient has an existing record, this record will be
+	//stored in aggregation data for the patient's history and then overwritten
 	AddRecord(pid uuid.UUID, vitals model.Vitals) (*model.Patient, error)
 }

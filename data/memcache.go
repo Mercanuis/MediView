@@ -11,29 +11,24 @@ import (
 )
 
 type (
-	//PatientCache represents a list of Patients
-	PatientCache struct {
-		patients map[uuid.UUID]model.Patient
-	}
-
 	//MemCache represents a data store of Patients and Records
 	MemCache struct {
 		sync.RWMutex
-		PatientList PatientCache
+		PatientList    map[uuid.UUID]model.Patient
+		PatientHistory map[uuid.UUID]model.PatientVitalHistory
 	}
 )
 
 //NewMemCache initializes a new MemCache
 func NewMemCache() DAO {
 	return &MemCache{
-		PatientList: PatientCache{
-			patients: make(map[uuid.UUID]model.Patient),
-		},
+		PatientList:    make(map[uuid.UUID]model.Patient),
+		PatientHistory: make(map[uuid.UUID]model.PatientVitalHistory),
 	}
 }
 
 func (m *MemCache) GetPatient(id uuid.UUID) (*model.Patient, error) {
-	pat, ok := m.PatientList.patients[id]
+	pat, ok := m.PatientList[id]
 	if !ok {
 		return nil, errors.New("invalid key")
 	}
@@ -47,21 +42,24 @@ func (m *MemCache) AddPatient(name string, age int) (uuid.UUID, error) {
 	}
 
 	//TODO: is this possible with UUID? Will we ever reach this point?
-	if _, exists := m.PatientList.patients[key]; exists {
+	if _, exists := m.PatientList[key]; exists {
 		//key existed already
 		log.Print("Existing key")
 		return key, nil
 	}
 
+	//Write to table
 	m.Lock()
 	defer m.Unlock()
-	m.PatientList.patients[key] = model.NewPatient(key, name, age)
+	m.PatientList[key] = model.NewPatient(key, name, age)
 	return key, nil
 }
 
-func (m *MemCache) createKey() (key uuid.UUID, err error) {
-	key = uuid.New()
-	err = nil
+func (m *MemCache) createKey() (uuid.UUID, error) {
+	//err being the 'zero-value' will be nil
+	var err error
+	key := uuid.New()
+
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.Errorf("unable to create key: %v", r)
@@ -72,7 +70,7 @@ func (m *MemCache) createKey() (key uuid.UUID, err error) {
 
 func (m *MemCache) GetPatients() model.PatientRecords {
 	var arr []model.Patient
-	for _, v := range m.PatientList.patients {
+	for _, v := range m.PatientList {
 		arr = append(arr, v)
 	}
 
@@ -82,19 +80,35 @@ func (m *MemCache) GetPatients() model.PatientRecords {
 }
 
 func (m *MemCache) DeletePatient(id uuid.UUID) {
-	delete(m.PatientList.patients, id)
+	delete(m.PatientList, id)
 }
 
 func (m *MemCache) AddRecord(pid uuid.UUID, vitals model.Vitals) (*model.Patient, error) {
-	pat, ok := m.PatientList.patients[pid]
+	pat, ok := m.PatientList[pid]
 	if !ok {
 		return nil, errors.New("invalid key")
 	}
 
+	//Create a new history for a new patient
+	//If they exist, update their history
+	history := m.getPatientHistory(pid, vitals)
 	pat.Vitals = vitals
 
+	//Write to both tables.
 	m.Lock()
 	defer m.Unlock()
-	m.PatientList.patients[pid] = pat
+	m.PatientList[pid] = pat
+	m.PatientHistory[pid] = history
 	return &pat, nil
+}
+
+func (m *MemCache) getPatientHistory(pid uuid.UUID, vitals model.Vitals) model.PatientVitalHistory {
+	var history model.PatientVitalHistory
+	if _, ok := m.PatientHistory[pid]; !ok {
+		history = model.NewPatientVitalHistory(pid, vitals.Pressure, vitals.Pulse, vitals.Glucose)
+	} else {
+		history = m.PatientHistory[pid]
+		history.UpdateHistory(vitals.Pressure.Systolic, vitals.Pressure.Diastolic, vitals.Pulse, vitals.Glucose)
+	}
+	return history
 }

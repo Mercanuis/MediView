@@ -74,7 +74,7 @@ func NewPatientVitalHistory(pid uuid.UUID, bpa bloodPressure, pul int, glu int) 
 	}
 }
 
-func (h *PatientVitalHistory) updateHistory(sys, dys, pul, glu int) {
+func (h *PatientVitalHistory) UpdateHistory(sys, dys, pul, glu int) {
 	h.bpaCount++
 	h.BPA.Systolic = (h.BPA.Systolic + sys) / h.bpaCount
 	h.BPA.Diastolic = (h.BPA.Diastolic + dys) / h.bpaCount

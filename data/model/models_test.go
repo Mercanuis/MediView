@@ -41,7 +41,7 @@ func TestUpdateHistory(t *testing.T) {
 		Diastolic: 80,
 	}
 	v := NewPatientVitalHistory(uuid.New(), bpa, 75, 45)
-	v.updateHistory(145, 78, 65, 70)
+	v.UpdateHistory(145, 78, 65, 70)
 	assert.Equal(t, 136, v.BPA.Systolic)
 	assert.Equal(t, 79, v.BPA.Diastolic)
 	assert.Equal(t, 70, v.PAvg)
