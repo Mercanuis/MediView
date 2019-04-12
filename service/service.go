@@ -50,3 +50,7 @@ func (s *Service) AddRecord(pid uuid.UUID, sys, dys, pul, glu int) (*model.Patie
 	}
 	return patient, nil
 }
+
+func (s *Service) GetHistories() model.PatientVitalHistories {
+	return s.data.GetPatientHistories()
+}

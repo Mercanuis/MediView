@@ -80,6 +80,21 @@ func (s *Server) addRecordHandler() http.Handler {
 	})
 }
 
+func (s *Server) getHistoryHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+
+		histories := s.MediService.GetHistories()
+		if err := writeJSON(w, http.StatusOK, histories); err != nil {
+			//TODO: Figure out what to do with error
+		}
+		_, _ = fmt.Fprint(os.Stdout, "Success!")
+	})
+}
+
 func writeJSON(w http.ResponseWriter, code int, i interface{}) error {
 	setContentType(w, code, "application/json; charset=UTF-8")
 	if err := json.NewEncoder(w).Encode(i); err != nil {

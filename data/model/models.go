@@ -54,11 +54,15 @@ type PatientRecords struct {
 type PatientVitalHistory struct {
 	Id       uuid.UUID     `json:"id"`
 	BPA      bloodPressure `json:"avgBloodPressure"`
+	PAvg     int           `json:"avgPulse"`
+	GAvg     int           `json:"avgGlucose"`
 	bpaCount int
-	PAvg     int `json:"avgPulse"`
 	pCount   int
-	GAvg     int `json:"avgGlucose"`
 	gCount   int
+}
+
+type PatientVitalHistories struct {
+	Histories []PatientVitalHistory `json:"histories"`
 }
 
 //NewPatientVitalHistory returns a new instance of PatientsVitalHistory

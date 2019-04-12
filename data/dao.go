@@ -31,4 +31,7 @@ type DAO interface {
 	//If the Patient has an existing record, this record will be
 	//stored in aggregation data for the patient's history and then overwritten
 	AddRecord(pid uuid.UUID, vitals model.Vitals) (*model.Patient, error)
+
+	//Returned the associated history for the Patients
+	GetPatientHistories() model.PatientVitalHistories
 }

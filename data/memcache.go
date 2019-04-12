@@ -112,3 +112,14 @@ func (m *MemCache) getPatientHistory(pid uuid.UUID, vitals model.Vitals) model.P
 	}
 	return history
 }
+
+func (m *MemCache) GetPatientHistories() model.PatientVitalHistories {
+	var arr []model.PatientVitalHistory
+	for _, v := range m.PatientHistory {
+		arr = append(arr, v)
+	}
+
+	return model.PatientVitalHistories{
+		Histories: arr,
+	}
+}
