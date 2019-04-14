@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 )
 
 //Server represents the HTTP main
@@ -23,6 +24,7 @@ type Server struct {
 func New(s service.Service) (*Server, error) {
 	server := &Server{
 		MediService: s,
+		log:         log.New(os.Stderr, "", log.LstdFlags),
 		mux:         http.NewServeMux(),
 	}
 

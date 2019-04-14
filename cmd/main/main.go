@@ -4,12 +4,12 @@ import (
 	"MediView/di"
 	"context"
 	"fmt"
+	"log"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/apex/log"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -52,7 +52,7 @@ func realMain() int {
 	signal.Notify(sigCh, syscall.SIGTERM, os.Interrupt)
 	select {
 	case <-sigCh:
-		log.Debug("[DEBUG] Received SIGTERM signal, shutting down HTTP server\n")
+		log.Print("[DEBUG] Received SIGTERM signal, shutting down HTTP server\n")
 	case <-ctx.Done():
 	}
 
