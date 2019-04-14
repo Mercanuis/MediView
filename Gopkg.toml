@@ -1,0 +1,49 @@
+# Gopkg.toml example
+#
+# Refer to https://golang.github.io/dep/docs/Gopkg.toml.html
+# for detailed Gopkg.toml documentation.
+#
+# required = ["github.com/user/thing/cmd/thing"]
+# ignored = ["github.com/user/project/pkgX", "bitbucket.org/user/project/pkgA/pkgY"]
+#
+# [[constraint]]
+#   name = "github.com/user/project"
+#   version = "1.0.0"
+#
+# [[constraint]]
+#   name = "github.com/user/project2"
+#   branch = "dev"
+#   source = "github.com/myfork/project2"
+#
+# [[override]]
+#   name = "github.com/x/y"
+#   version = "2.4.0"
+#
+# [prune]
+#   non-go = false
+#   go-tests = true
+#   unused-packages = true
+
+[[constraint]]
+  name = "github.com/google/uuid"
+  revision = "0cd6bf5da1e1c83f8b45653022c74f71af0538a4"
+
+[[constraint]]
+  name = "github.com/streadway/amqp"
+  revision = "75d898a42a940fbc854dfd1a4199eabdc00cf024"
+
+[[constraint]]
+  name = "gotest.tools"
+  revision = "d1a6560d983a17c84a34edeb67898f2dc00bb646"
+
+[[constraint]]
+  name = "github.com/pkg/errors"
+  version = "0.8.0"
+
+[[constraint]]
+  name = "golang.org/x/sync"
+  branch = "master"
+
+[prune]
+  go-tests = true
+  unused-packages = true

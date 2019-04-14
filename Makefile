@@ -1,5 +1,12 @@
 GOPATH := $(shell go env GOPATH)
 
+$(GOPATH)/bin/dep:
+	@go get github.com/golang/dep/cmd/dep
+
+.PHONY: dep
+dep: $(GOPATH)/bin/dep
+	@dep ensure -v
+
 .PHONY: test
 test:
 	@go test -v -race ./...
