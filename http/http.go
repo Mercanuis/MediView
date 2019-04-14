@@ -37,6 +37,8 @@ func (s *Server) registerHandlers() {
 	s.mux.Handle("/addPatient", s.addPatientHandler())
 	s.mux.Handle("/addRecord", s.addRecordHandler())
 	s.mux.Handle("/getHistories", s.getHistoryHandler())
+	s.mux.Handle("/resetHistory", s.getHistoryResetHandler())
+	s.mux.Handle("/deleteHistory", s.getHistoryDeleteHandler())
 }
 
 // Serve starts accept requests from the given listener. If any returns error.

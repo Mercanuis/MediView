@@ -103,6 +103,46 @@ func (s *Server) getHistoryHandler() http.Handler {
 	})
 }
 
+func (s *Server) getHistoryResetHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodDelete {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+
+		s.MediService.ResetHistory()
+
+		//return to verify reset occurred correctly
+		histories := s.MediService.GetHistories()
+
+		if err := writeJSON(w, http.StatusOK, histories); err != nil {
+			s.handleError(w, err, FailedToGetHistory)
+			return
+		}
+		s.log.Print("Successfully performed GET of History Reset")
+	})
+}
+
+func (s *Server) getHistoryDeleteHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodDelete {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+
+		s.MediService.DeleteHistory()
+
+		//return to verify reset occurred correctly
+		histories := s.MediService.GetHistories()
+
+		if err := writeJSON(w, http.StatusOK, histories); err != nil {
+			s.handleError(w, err, FailedToGetHistory)
+			return
+		}
+		s.log.Print("Successfully performed GET of History Delete")
+	})
+}
+
 func writeJSON(w http.ResponseWriter, code int, i interface{}) error {
 	setContentType(w, code, "application/json; charset=UTF-8")
 	if err := json.NewEncoder(w).Encode(i); err != nil {
