@@ -3,10 +3,9 @@ package http
 import (
 	"MediView/service"
 	"context"
+	"log"
 	"net"
 	"net/http"
-
-	"go.uber.org/zap"
 )
 
 //Server represents the HTTP main
@@ -15,7 +14,7 @@ type Server struct {
 	MediService service.Service
 
 	//Third-party logic (HTTP, Logs)
-	log    *zap.Logger //TODO: keep this for the package to be found for later, implement later
+	log    *log.Logger
 	mux    *http.ServeMux
 	server *http.Server
 }

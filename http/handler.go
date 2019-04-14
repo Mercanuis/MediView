@@ -3,9 +3,7 @@ package http
 import (
 	"MediView/http/dto"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/pkg/errors"
 )
@@ -22,7 +20,7 @@ func (s *Server) getRecordsHandler() http.Handler {
 			s.handleError(w, err, FailedToGetRecords)
 			return
 		}
-		_, _ = fmt.Fprint(os.Stdout, "Success!")
+		s.log.Print("Successfully performed GET of Records")
 	})
 }
 
@@ -37,18 +35,20 @@ func (s *Server) addPatientHandler() http.Handler {
 		var patient dto.PatientAddRequest
 		err := decoder.Decode(&patient)
 		if err != nil {
+			s.log.Printf("[Error] failed to decode JSON body: %v\n", err)
 			s.handleError(w, err, FailedToAddPatient)
 			return
 		}
 
 		err = s.MediService.AddPatient(patient.Name, patient.Age)
 		if err != nil {
+			s.log.Printf("[Error] failed to add patient: %v\n", err)
 			s.handleError(w, err, FailedToAddPatient)
 			return
 		}
 
 		setContentType(w, http.StatusOK, "application/json; charset=UTF-8")
-		_, _ = fmt.Fprint(os.Stdout, "Success!")
+		s.log.Print("Successfully performed POST of Patient")
 	})
 }
 
@@ -63,6 +63,7 @@ func (s *Server) addRecordHandler() http.Handler {
 		var record dto.RecordAddRequest
 		err := decoder.Decode(&record)
 		if err != nil {
+			s.log.Printf("[Error] failed to decode JSON body: %v\n", err)
 			s.handleError(w, err, FailedToAddRecord)
 			return
 		}
@@ -74,6 +75,7 @@ func (s *Server) addRecordHandler() http.Handler {
 			record.Pulse,
 			record.Glucose)
 		if err != nil {
+			s.log.Printf("[Error] failed to add patient record: %v\n", err)
 			s.handleError(w, err, FailedToAddRecord)
 		}
 
@@ -81,7 +83,7 @@ func (s *Server) addRecordHandler() http.Handler {
 			s.handleError(w, err, FailedToAddRecord)
 			return
 		}
-		_, _ = fmt.Fprint(os.Stdout, "Success!")
+		s.log.Print("Successfully performed POST of Record")
 	})
 }
 
@@ -97,7 +99,7 @@ func (s *Server) getHistoryHandler() http.Handler {
 			s.handleError(w, err, FailedToGetHistory)
 			return
 		}
-		_, _ = fmt.Fprint(os.Stdout, "Success!")
+		s.log.Print("Successfully performed GET of History")
 	})
 }
 

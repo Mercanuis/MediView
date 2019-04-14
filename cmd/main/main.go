@@ -9,7 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/streadway/amqp"
+	"github.com/apex/log"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -21,11 +21,10 @@ const (
 )
 
 func main() {
-	_, _ = amqp.Dial("todo")
-	os.Exit(realMain(os.Args))
+	os.Exit(realMain())
 }
 
-func realMain(args []string) int {
+func realMain() int {
 	//Initialize HTTP
 	container := di.NewContainer()
 	httpServer, err := container.GetHTTPServer()
@@ -53,15 +52,13 @@ func realMain(args []string) int {
 	signal.Notify(sigCh, syscall.SIGTERM, os.Interrupt)
 	select {
 	case <-sigCh:
-		_, _ = fmt.Fprintf(os.Stdout, "[INFO] received SIGTERM, exiting server gracefully")
-		//TODO: Implement later - logger.Info("received SIGTERM, exiting main gracefully")
+		log.Debug("[DEBUG] Received SIGTERM signal, shutting down HTTP server\n")
 	case <-ctx.Done():
 	}
 
 	// Gracefully shutdown HTTP main.
 	if err := httpServer.GracefulStop(ctx); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "[ERROR] failed to gracefully shutdown HTTP server: %s\n", err)
-		//TODO; Implement later - logger.Error("failed to gracefully shutdown HTTP main", zap.Error(err))
+		log.Fatalf("[ERROR] Failed to gracefully shutdown HTTP Server: %s\n", err)
 	}
 
 	cancel()
