@@ -19,7 +19,8 @@ func (s *Server) getRecordsHandler() http.Handler {
 
 		records := s.MediService.GetLatestRecords()
 		if err := writeJSON(w, http.StatusOK, records); err != nil {
-			//TODO: Figure out what to do with error
+			s.handleError(w, err, FailedToGetRecords)
+			return
 		}
 		_, _ = fmt.Fprint(os.Stdout, "Success!")
 	})
@@ -36,12 +37,14 @@ func (s *Server) addPatientHandler() http.Handler {
 		var patient dto.PatientAddRequest
 		err := decoder.Decode(&patient)
 		if err != nil {
-			//TODO: Determine how to handle error
+			s.handleError(w, err, FailedToAddPatient)
+			return
 		}
 
 		err = s.MediService.AddPatient(patient.Name, patient.Age)
 		if err != nil {
-			//TODO: Determine how to handle error
+			s.handleError(w, err, FailedToAddPatient)
+			return
 		}
 
 		setContentType(w, http.StatusOK, "application/json; charset=UTF-8")
@@ -60,21 +63,23 @@ func (s *Server) addRecordHandler() http.Handler {
 		var record dto.RecordAddRequest
 		err := decoder.Decode(&record)
 		if err != nil {
-			//TODO: Determine how to handle error
+			s.handleError(w, err, FailedToAddRecord)
+			return
 		}
 
 		patient, err := s.MediService.AddRecord(
-			record.Id,
+			record.ID,
 			record.Systolic,
 			record.Diastolic,
 			record.Pulse,
 			record.Glucose)
 		if err != nil {
-			//TODO: Determine how to handle error
+			s.handleError(w, err, FailedToAddRecord)
 		}
 
 		if err := writeJSON(w, http.StatusOK, patient); err != nil {
-			//TODO: Figure out what to do with error
+			s.handleError(w, err, FailedToAddRecord)
+			return
 		}
 		_, _ = fmt.Fprint(os.Stdout, "Success!")
 	})
@@ -89,7 +94,8 @@ func (s *Server) getHistoryHandler() http.Handler {
 
 		histories := s.MediService.GetHistories()
 		if err := writeJSON(w, http.StatusOK, histories); err != nil {
-			//TODO: Figure out what to do with error
+			s.handleError(w, err, FailedToGetHistory)
+			return
 		}
 		_, _ = fmt.Fprint(os.Stdout, "Success!")
 	})

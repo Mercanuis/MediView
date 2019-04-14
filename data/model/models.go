@@ -4,17 +4,49 @@ import (
 	"github.com/google/uuid"
 )
 
-type BloodPressure struct {
-	Systolic  int `json:"systolic"`
-	Diastolic int `json:"diastolic"`
-}
+type (
+	//BloodPressure represents blood pressure
+	BloodPressure struct {
+		Systolic  int `json:"systolic"`
+		Diastolic int `json:"diastolic"`
+	}
 
-//Vitals is a representation of a patients current vital signs
-type Vitals struct {
-	Pressure BloodPressure `json:"pressure"`
-	Pulse    int           `json:"pulse"`
-	Glucose  int           `json:"glucose"`
-}
+	//Vitals is a representation of a patients current vital signs
+	Vitals struct {
+		Pressure BloodPressure `json:"pressure"`
+		Pulse    int           `json:"pulse"`
+		Glucose  int           `json:"glucose"`
+	}
+
+	//Patient represents a patient's information in the system
+	Patient struct {
+		ID     uuid.UUID `json:"id"`
+		Name   string    `json:"name"`
+		Age    int       `json:"age"`
+		Vitals Vitals    `json:"vitals"`
+	}
+
+	//PatientRecords represents a series of Patients
+	PatientRecords struct {
+		Records []Patient `json:"records"`
+	}
+
+	//PatientVitalHistory represents an aggregation of a Patient's vitals
+	PatientVitalHistory struct {
+		ID       uuid.UUID     `json:"id"`
+		BPA      BloodPressure `json:"avgBloodPressure"`
+		PAvg     int           `json:"avgPulse"`
+		GAvg     int           `json:"avgGlucose"`
+		bpaCount int
+		pCount   int
+		gCount   int
+	}
+
+	//PatientVitalHistories represent a collection of history
+	PatientVitalHistories struct {
+		Histories []PatientVitalHistory `json:"histories"`
+	}
+)
 
 //NewVitals returns a new Vitals struct
 func NewVitals(sys, dys, pulse, glu int) Vitals {
@@ -28,47 +60,19 @@ func NewVitals(sys, dys, pulse, glu int) Vitals {
 	}
 }
 
-//Patient represents a patient's information in the system
-type Patient struct {
-	Id     uuid.UUID `json:"id"`
-	Name   string    `json:"name"`
-	Age    int       `json:"age"`
-	Vitals Vitals    `json:"vitals"`
-}
-
 //NewPatient returns a new Patient struct
 func NewPatient(i uuid.UUID, n string, a int) Patient {
 	return Patient{
-		Id:   i,
+		ID:   i,
 		Name: n,
 		Age:  a,
 	}
 }
 
-//PatientRecords represents a series of Patients
-type PatientRecords struct {
-	Records []Patient `json:"records"`
-}
-
-//PatientVitalHistory represents an aggregation of a Patient's vitals
-type PatientVitalHistory struct {
-	Id       uuid.UUID     `json:"id"`
-	BPA      BloodPressure `json:"avgBloodPressure"`
-	PAvg     int           `json:"avgPulse"`
-	GAvg     int           `json:"avgGlucose"`
-	bpaCount int
-	pCount   int
-	gCount   int
-}
-
-type PatientVitalHistories struct {
-	Histories []PatientVitalHistory `json:"histories"`
-}
-
 //NewPatientVitalHistory returns a new instance of PatientsVitalHistory
 func NewPatientVitalHistory(pid uuid.UUID, bpa BloodPressure, pul int, glu int) PatientVitalHistory {
 	return PatientVitalHistory{
-		Id:       pid,
+		ID:       pid,
 		BPA:      bpa,
 		bpaCount: 1,
 		PAvg:     pul,

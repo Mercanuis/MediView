@@ -18,25 +18,25 @@ func TestVitals(t *testing.T) {
 
 func TestPatient(t *testing.T) {
 	v := NewPatient(uuid.New(), "Joe", 30)
-	t.Logf("Created UUID: %v", v.Id)
+	t.Logf("Created UUID: %v", v.ID)
 	assert.Equal(t, "Joe", v.Name)
 	assert.Equal(t, 30, v.Age)
 }
 
 func TestPatientVitalHistory(t *testing.T) {
-	bpa := bloodPressure{
+	bpa := BloodPressure{
 		Systolic:  128,
 		Diastolic: 80,
 	}
 	v := NewPatientVitalHistory(uuid.New(), bpa, 75, 45)
-	t.Logf("Created UUID: %v", v.Id)
+	t.Logf("Created UUID: %v", v.ID)
 	assert.Equal(t, 128, v.BPA.Systolic)
 	assert.Equal(t, 75, v.PAvg)
 	assert.Equal(t, 45, v.GAvg)
 }
 
 func TestUpdateHistory(t *testing.T) {
-	bpa := bloodPressure{
+	bpa := BloodPressure{
 		Systolic:  128,
 		Diastolic: 80,
 	}

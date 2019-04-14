@@ -31,15 +31,15 @@ func TestGetRecords(t *testing.T) {
 	found3 := false
 
 	for _, i := range patients.Records {
-		if i.Id == key1 {
+		if i.ID == key1 {
 			if i.Name == "Joe" && i.Age == 30 {
 				found1 = true
 			}
-		} else if i.Id == key2 {
+		} else if i.ID == key2 {
 			if i.Name == "Joan" && i.Age == 25 {
 				found2 = true
 			}
-		} else if i.Id == key3 {
+		} else if i.ID == key3 {
 			if i.Name == "John" && i.Age == 40 {
 				found3 = true
 			}

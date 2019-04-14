@@ -45,14 +45,17 @@ func (s *Service) AddRecord(pid uuid.UUID, sys, dys, pul, glu int) (*model.Patie
 	return patient, nil
 }
 
+//GetHistories returns a list of Patient Histories
 func (s *Service) GetHistories() model.PatientVitalHistories {
 	return s.data.GetPatientHistories()
 }
 
+//ResetHistory resets the patient history
 func (s *Service) ResetHistory() {
 	s.data.ResetPatientHistory()
 }
 
+//DeleteHistory deletes the patient history
 func (s *Service) DeleteHistory() {
 	s.data.DeleteAllHistory()
 }

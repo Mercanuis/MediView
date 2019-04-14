@@ -20,6 +20,7 @@ type Server struct {
 	server *http.Server
 }
 
+//New returns a new Service
 func New(s service.Service) (*Server, error) {
 	server := &Server{
 		MediService: s,
