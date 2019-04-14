@@ -96,7 +96,7 @@ func TestAddPatientHandler(t *testing.T) {
 		},
 		"FailedToAddPatient": {
 			httpMethod: http.MethodGet,
-			errorCode:  400,
+			errorCode:  405,
 			AddRequest: dto.PatientAddRequest{
 				Age:  40,
 				Name: "Jim",
