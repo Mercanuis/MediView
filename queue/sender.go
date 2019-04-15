@@ -23,9 +23,9 @@ type Sender interface {
 	DeleteHistorySender(dhr dto.DeleteHistoryRequest)
 }
 
-func failOnError(err error, msg string) {
+func onError(err error, msg string) {
 	if err != nil {
-		log.Fatalf("%s: %s", msg, err)
+		log.Printf("%s: %s", msg, err)
 	}
 }
 
@@ -61,7 +61,7 @@ func (s *senderCache) DeleteHistorySender(dhr dto.DeleteHistoryRequest) {
 func (s *senderCache) send(data interface{}) {
 	encoded, err := s.encodeMessage(data)
 	if err != nil {
-		failOnError(err, "failed to encode data")
+		onError(err, "failed to encode data")
 	}
 	s.publishToQueue(encoded)
 }
@@ -69,7 +69,7 @@ func (s *senderCache) send(data interface{}) {
 func (s *senderCache) encodeMessage(data interface{}) ([]byte, error) {
 	marshaled, err := json.Marshal(data)
 	if err != nil {
-		failOnError(err, "failed to marshall data")
+		onError(err, "failed to marshall data")
 	}
 	b := bytes.Buffer{}
 	e := gob.NewEncoder(&b)
@@ -83,17 +83,17 @@ func (s *senderCache) encodeMessage(data interface{}) ([]byte, error) {
 
 func (s *senderCache) publishToQueue(msg []byte) {
 	conn, err := amqp.Dial(queueURL)
-	failOnError(err, "Failed to connect to RabbitMQ")
+	onError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
 	ch, err := conn.Channel()
-	failOnError(err, "Failed to open a channel")
+	onError(err, "Failed to open a channel")
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
 		queueName, false, false, false, false, nil,
 	)
-	failOnError(err, "Failed to declare a queue")
+	onError(err, "Failed to declare a queue")
 
 	body := msg
 	err = ch.Publish("", q.Name, false, false,
@@ -102,5 +102,5 @@ func (s *senderCache) publishToQueue(msg []byte) {
 			Body:        []byte(body),
 		})
 	log.Printf(" [x] Sent %s", body)
-	failOnError(err, "Failed to publish a message")
+	onError(err, "Failed to publish a message")
 }

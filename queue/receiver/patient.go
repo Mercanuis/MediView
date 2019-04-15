@@ -27,7 +27,7 @@ func decodePAT(str []byte) dto.PatientAddRequest {
 	var d dto.PatientAddRequest
 	err := json.Unmarshal(str, &d)
 	if err != nil {
-		failOnError(err, "failed to decode message off queue")
+		onError(err, "failed to decode message off queue")
 	}
 
 	return d

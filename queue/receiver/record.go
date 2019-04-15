@@ -27,7 +27,7 @@ func decodeRAR(str []byte) dto.RecordAddRequest {
 	var d dto.RecordAddRequest
 	err := json.Unmarshal(str, &d)
 	if err != nil {
-		failOnError(err, "failed to decode message off queue")
+		onError(err, "failed to decode message off queue")
 	}
 
 	return d

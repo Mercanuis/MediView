@@ -14,9 +14,9 @@ const (
 	queueURL  = "amqp://guest:guest@localhost:5672/"
 )
 
-func failOnError(err error, msg string) {
+func onError(err error, msg string) {
 	if err != nil {
-		log.Fatalf("%s: %s", msg, err)
+		log.Printf("%s: %s", msg, err)
 	}
 }
 
@@ -46,22 +46,22 @@ func NewReceiver(s *service.Service) Receiver {
 //determine the message type to call the proper method in the service
 func (r *receiverCache) ConsumeFromQueue() error {
 	conn, err := amqp.Dial(queueURL)
-	failOnError(err, "Failed to connect to RabbitMQ")
+	onError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
 	ch, err := conn.Channel()
-	failOnError(err, "Failed to open a channel")
+	onError(err, "Failed to open a channel")
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
 		queueName, false, false, false, false, nil,
 	)
-	failOnError(err, "Failed to declare a queue")
+	onError(err, "Failed to declare a queue")
 
 	msgs, err := ch.Consume(
 		q.Name, "", true, false, false, false, nil,
 	)
-	failOnError(err, "Failed to register a consumer")
+	onError(err, "Failed to register a consumer")
 
 	forever := make(chan bool)
 
@@ -96,7 +96,7 @@ func decodeType(str []byte) dto.RequestType {
 	var d dto.RequestType
 	err := json.Unmarshal(str, &d)
 	if err != nil {
-		failOnError(err, "failed to decode message off queue")
+		onError(err, "failed to decode message off queue")
 	}
 
 	return d
