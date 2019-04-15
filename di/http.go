@@ -4,13 +4,13 @@ import (
 	"MediView/http"
 )
 
-// HTTPServerProvider defines the interface of providing a HTTP main
+// HTTPServerProvider defines the interface of providing a HTTP server
 type HTTPServerProvider interface {
-	// GetHTTPServer provides an HTTP main
+	// GetHTTPServer provides an HTTP server
 	GetHTTPServer() (*http.Server, error)
 }
 
-// GetHTTPServer provides an HTTP main
+// GetHTTPServer provides an HTTP server
 func (c *containerImpl) GetHTTPServer() (*http.Server, error) {
 	if c.cache.httpServer != nil {
 		return c.cache.httpServer, nil

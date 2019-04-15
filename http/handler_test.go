@@ -4,6 +4,7 @@ import (
 	"MediView/data/model"
 	"MediView/http/dto"
 	"MediView/http/mocks"
+	"MediView/queue/receiver"
 	"MediView/service"
 	"bytes"
 	"encoding/json"
@@ -20,7 +21,8 @@ import (
 
 func testHTTPServer(t *testing.T, s service.Service) *Server {
 	t.Helper()
-	server, err := New(s)
+	rec := receiver.NewReceiver(&s)
+	server, err := New(&s, rec)
 	if err != nil {
 		t.Fatalf("err: %s", err)
 	}
@@ -73,14 +75,14 @@ func TestAddPatientHandler(t *testing.T) {
 		httpMethod     string
 		errorCode      int
 		AddRequest     dto.PatientAddRequest
-		AddPatientMock func(name string, age int) (uuid.UUID, error)
+		AddPatientMock func(name string, age int) error
 	}{
 		"GET": {
 			httpMethod: http.MethodGet,
 			errorCode:  405,
 			AddRequest: dto.PatientAddRequest{},
-			AddPatientMock: func(name string, age int) (uuid.UUID, error) {
-				return uuid.UUID{}, nil
+			AddPatientMock: func(name string, age int) error {
+				return nil
 			},
 		},
 		"POST": {
@@ -90,8 +92,8 @@ func TestAddPatientHandler(t *testing.T) {
 				Age:  33,
 				Name: "Joey",
 			},
-			AddPatientMock: func(name string, age int) (uuid.UUID, error) {
-				return uuid.New(), nil
+			AddPatientMock: func(name string, age int) error {
+				return nil
 			},
 		},
 		"FailedToAddPatient": {
@@ -101,8 +103,8 @@ func TestAddPatientHandler(t *testing.T) {
 				Age:  40,
 				Name: "Jim",
 			},
-			AddPatientMock: func(name string, age int) (uuid.UUID, error) {
-				return uuid.UUID{}, errors.New("Bad Request")
+			AddPatientMock: func(name string, age int) error {
+				return errors.New("Bad Request")
 			},
 		},
 	}

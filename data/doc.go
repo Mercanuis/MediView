@@ -8,6 +8,11 @@
 //
 //dao.go is an interface that defines the methods that are allowed
 //by the data package to access the data layers, and should be used
-//by an initialized DAO in the application.
-//TODO: Memcache as an HTTP Servcie works now. Next, implement RabbitMQ to work via message queue
+//by an initialized DAO in the application. By making this an interface
+//it allows for multiple implementations and to allow for something more
+//than a memory cache implementation (the default)
+//
+//The data store is based on the use of UUIDs. This is due to the
+//uniqueness of UUIDs and the fact that they can be "refreshed"
+//given the applications constraints.
 package data

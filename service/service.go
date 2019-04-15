@@ -28,7 +28,7 @@ func (s *Service) GetLatestRecords() model.PatientRecords {
 
 //AddPatient adds a new patient to the system
 func (s *Service) AddPatient(name string, age int) error {
-	_, err := s.data.AddPatient(name, age)
+	err := s.data.AddPatient(name, age)
 	if err != nil {
 		return errors.Wrap(err, "failed to add patient to system")
 	}

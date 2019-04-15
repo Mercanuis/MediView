@@ -62,16 +62,19 @@ func (s *Server) Serve(ln net.Listener) error {
 	return nil
 }
 
+//StartReceiver initializes the server's receiver
 func (s *Server) StartReceiver() error {
 	return s.receiver.ConsumeFromQueue()
 }
 
+//ResetData adds a 'reset' message to the message queue
 func (s *Server) ResetData() {
 	rhr := dto.ResetHistoryRequest{}
 	rhr.Type = dto.TypeRHR
 	s.sender.ResetHistorySender(rhr)
 }
 
+//DeleteData adds a 'delete' message to the message queue
 func (s *Server) DeleteData() {
 	dhr := dto.DeleteHistoryRequest{}
 	dhr.Type = dto.TypeDHR

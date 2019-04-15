@@ -6,10 +6,10 @@ import (
 	"github.com/google/uuid"
 )
 
-//The Data Access Object(DAO) interface is meant to be an implementation of
-//the application's data needs. The idea behind putting it behind an interface
-//is because it allows for multiple implementations to be used to serve the
-//client's needs.
+//DAO is the Data Access Object(DAO) interface, and is meant to be an
+//implementation of the application's data needs. The idea behind putting
+//it behind an interface is because it allows for multiple implementations
+//to be used to serve the client's needs.
 type DAO interface {
 	//Gets a Patient from the data store
 	//If the key doesn't exist in the data store an error is returned
@@ -18,7 +18,7 @@ type DAO interface {
 
 	//Adds a Patient to the data store
 	//p - the Patient to add to the data store
-	AddPatient(name string, age int) (uuid.UUID, error)
+	AddPatient(name string, age int) error
 
 	//Gets the list of Patients from the data store
 	GetPatients() model.PatientRecords

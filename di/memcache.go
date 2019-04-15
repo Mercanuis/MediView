@@ -4,12 +4,13 @@ import (
 	"MediView/data"
 )
 
-//MemcacheProvider defines the interface of providing a MediService instance
+//MemcacheProvider defines the interface of providing a memory cache
 type MemcacheProvider interface {
-	//GetReciever provides a MediService instance
+	//GetReciever provides a Memcache
 	GetMemcache() (data.DAO, error)
 }
 
+//GetMemcache returns a new DAO instance
 func (c *containerImpl) GetMemcache() (data.DAO, error) {
 	if c.cache.memcache != nil {
 		return *c.cache.memcache, nil

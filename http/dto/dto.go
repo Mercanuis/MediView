@@ -3,13 +3,19 @@ package dto
 import "github.com/google/uuid"
 
 const (
+	//TypePAR represents a PatientAddRequest
 	TypePAR = "PAR"
+	//TypeRAR represents a RecordAddRequest
 	TypeRAR = "RAR"
+	//TypeRHR represents a ResetHistoryRequest
 	TypeRHR = "RHR"
+	//TypeDHR represents a DeleteHistoryRequest
 	TypeDHR = "DHR"
 )
 
 type (
+	//RequestType is a struct, meant to help the message queue determine
+	//the type of request being sent to the service
 	RequestType struct {
 		Type string `json:"type"`
 	}
@@ -31,10 +37,12 @@ type (
 		Glucose   int       `json:"glucose"`
 	}
 
+	//ResetHistoryRequest represents a request to reset the data store
 	ResetHistoryRequest struct {
 		RequestType
 	}
 
+	//DeleteHistoryRequest represents a request to delete data from the data store
 	DeleteHistoryRequest struct {
 		RequestType
 	}

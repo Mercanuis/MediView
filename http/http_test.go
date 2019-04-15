@@ -2,6 +2,7 @@ package http
 
 import (
 	"MediView/data"
+	"MediView/queue/receiver"
 	"MediView/service"
 	"context"
 	"fmt"
@@ -30,14 +31,16 @@ func testService(t *testing.T) service.Service {
 
 func startHTTPCServer(t *testing.T) (*Server, net.Listener) {
 	t.Helper()
-	server, err := New(testService(t))
+	s := testService(t)
+	rec := receiver.NewReceiver(&s)
+	server, err := New(&s, rec)
 	if err != nil {
 		t.Fatalf("err: %s", err)
 	}
 
 	ln := testListener(t)
 	go func() {
-		server.Serve(ln)
+		_ = server.Serve(ln)
 	}()
 
 	return server, ln
@@ -85,7 +88,9 @@ func (l *failedListener) Accept() (net.Conn, error) {
 }
 
 func TestServerServeFailed(t *testing.T) {
-	server, err := New(testService(t))
+	s := testService(t)
+	rec := receiver.NewReceiver(&s)
+	server, err := New(&s, rec)
 	if err != nil {
 		t.Fatalf("err: %s", err)
 	}

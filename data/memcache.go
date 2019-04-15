@@ -26,6 +26,7 @@ func NewMemCache() DAO {
 	}
 }
 
+//GetPatient returns a patient for the passed in UUID
 func (m *MemCache) GetPatient(id uuid.UUID) (*model.Patient, error) {
 	pat, ok := m.PatientList[id]
 	if !ok {
@@ -34,17 +35,18 @@ func (m *MemCache) GetPatient(id uuid.UUID) (*model.Patient, error) {
 	return &pat, nil
 }
 
-func (m *MemCache) AddPatient(name string, age int) (uuid.UUID, error) {
+//AddPatient adds a new Patient to the memory cache
+func (m *MemCache) AddPatient(name string, age int) error {
 	key, err := m.createKey()
 	if err != nil {
-		return uuid.UUID{}, err
+		return err
 	}
 
 	//Write to table
 	m.Lock()
 	defer m.Unlock()
 	m.PatientList[key] = model.NewPatient(key, name, age)
-	return key, nil
+	return nil
 }
 
 func (m *MemCache) createKey() (uuid.UUID, error) {
@@ -60,6 +62,7 @@ func (m *MemCache) createKey() (uuid.UUID, error) {
 	return key, err
 }
 
+//GetPatients returns the list of patients in the memory cache
 func (m *MemCache) GetPatients() model.PatientRecords {
 	var arr []model.Patient
 	for _, v := range m.PatientList {
@@ -71,10 +74,12 @@ func (m *MemCache) GetPatients() model.PatientRecords {
 	}
 }
 
+//DeletePatient removes a patient with the given UUID
 func (m *MemCache) DeletePatient(id uuid.UUID) {
 	delete(m.PatientList, id)
 }
 
+//AddRecord adds a new record of current Vitals to the memory cache
 func (m *MemCache) AddRecord(pid uuid.UUID, vitals model.Vitals) (*model.Patient, error) {
 	pat, ok := m.PatientList[pid]
 	if !ok {
@@ -105,6 +110,7 @@ func (m *MemCache) getPatientHistory(pid uuid.UUID, vitals model.Vitals) model.P
 	return history
 }
 
+//GetPatientHistories returns a list of PatientVitalHistories
 func (m *MemCache) GetPatientHistories() model.PatientVitalHistories {
 	var arr []model.PatientVitalHistory
 	for _, v := range m.PatientHistory {
@@ -116,6 +122,7 @@ func (m *MemCache) GetPatientHistories() model.PatientVitalHistories {
 	}
 }
 
+//ResetPatientHistory returns all keys in the memory cache to the 'zero-value' of the PatientVitalHistory
 func (m *MemCache) ResetPatientHistory() {
 	for k := range m.PatientHistory {
 		m.PatientHistory[k] = model.PatientVitalHistory{
@@ -124,6 +131,7 @@ func (m *MemCache) ResetPatientHistory() {
 	}
 }
 
+//DeleteAllHistory removes all values and keys from memory cache for PatientVitalHistory
 func (m *MemCache) DeleteAllHistory() {
 	for k := range m.PatientHistory {
 		delete(m.PatientHistory, k)
