@@ -18,3 +18,7 @@ coverage:
 .PHONY: main
 main:
 	@go run ./cmd/main/main.go
+
+.PHONY: main-short
+main-short:
+	@go run ./cmd/main/main.go short

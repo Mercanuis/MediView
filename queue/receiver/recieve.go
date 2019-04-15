@@ -20,6 +20,7 @@ func failOnError(err error, msg string) {
 	}
 }
 
+//Receiver is an interface that defines methods for pulling messages from the message queue
 type Receiver interface {
 	ConsumeFromQueue() error
 	AddPatientReceiver
@@ -32,6 +33,7 @@ type receiverCache struct {
 	service      *service.Service
 }
 
+//NewReceiver creates a new Receiver
 func NewReceiver(s *service.Service) Receiver {
 	r := &receiverCache{
 		service: s,
@@ -39,6 +41,9 @@ func NewReceiver(s *service.Service) Receiver {
 	return r
 }
 
+//ConsumeFromQueue initializes the receiver for the message queue
+//Once alive, the receiver will listen for messages and then
+//determine the message type to call the proper method in the service
 func (r *receiverCache) ConsumeFromQueue() error {
 	conn, err := amqp.Dial(queueURL)
 	failOnError(err, "Failed to connect to RabbitMQ")

@@ -15,6 +15,7 @@ const (
 	queueURL  = "amqp://guest:guest@localhost:5672/"
 )
 
+//Sender is an interface to define calling the message queue to add a message
 type Sender interface {
 	AddPatientSender(par dto.PatientAddRequest)
 	AddRecordSender(rar dto.RecordAddRequest)
@@ -32,22 +33,27 @@ type senderCache struct {
 	senderConn *amqp.Connection
 }
 
+//NewSender creates a new Sender
 func NewSender() Sender {
 	return &senderCache{}
 }
 
+//AddPatientSender sends a request to add a patient
 func (s *senderCache) AddPatientSender(par dto.PatientAddRequest) {
 	s.send(par)
 }
 
+//AddRecordSender sends a request to add a record
 func (s *senderCache) AddRecordSender(rar dto.RecordAddRequest) {
 	s.send(rar)
 }
 
+//ResetHistorySender sends a request to reset history
 func (s *senderCache) ResetHistorySender(rhr dto.ResetHistoryRequest) {
 	s.send(rhr)
 }
 
+//DeleteHistorySender sends a request to delete history
 func (s *senderCache) DeleteHistorySender(dhr dto.DeleteHistoryRequest) {
 	s.send(dhr)
 }
@@ -61,7 +67,10 @@ func (s *senderCache) send(data interface{}) {
 }
 
 func (s *senderCache) encodeMessage(data interface{}) ([]byte, error) {
-	marshalled, err := json.Marshal(data)
+	marshaled, err := json.Marshal(data)
+	if err != nil {
+		failOnError(err, "failed to marshall data")
+	}
 	b := bytes.Buffer{}
 	e := gob.NewEncoder(&b)
 	err = e.Encode(data)
@@ -69,8 +78,7 @@ func (s *senderCache) encodeMessage(data interface{}) ([]byte, error) {
 		return nil, err
 	}
 
-	//encoded := base64.StdEncoding.EncodeToString(b.Bytes())
-	return marshalled, nil
+	return marshaled, nil
 }
 
 func (s *senderCache) publishToQueue(msg []byte) {

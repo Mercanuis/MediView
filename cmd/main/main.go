@@ -19,13 +19,19 @@ const (
 	exitError
 
 	httpPort int = 20001
+
+	defaultResetTime  = 60 * time.Minute
+	defaultDeleteTime = 24 * time.Hour
+
+	shortResetTime  = 90 * time.Second
+	shortDeletetime = 2 * time.Minute
 )
 
 func main() {
-	os.Exit(realMain())
+	os.Exit(realMain(os.Args))
 }
 
-func realMain() int {
+func realMain(args []string) int {
 	//Initialize HTTP
 	container := di.NewContainer()
 	httpServer, err := container.GetHTTPServer()
@@ -52,39 +58,40 @@ func realMain() int {
 	wg.Go(func() error { return httpServer.Serve(httpLn) })
 	wg.Go(func() error { return httpServer.StartReceiver() })
 
-	//Resets the history every hour
-	wg.Go(func() error {
-		reset := make(chan os.Signal, 1)
-		signal.Notify(reset, syscall.SIGTERM, os.Interrupt)
-		doReset := true
-		select {
-		case <-reset:
-			doReset = false
-		}
-		for doReset {
-			_ = time.AfterFunc(60*time.Minute, func() {
+	resTime := time.NewTicker(defaultResetTime)
+	delTime := time.NewTicker(defaultDeleteTime)
+	if args[1] == "short" {
+		resTime = time.NewTicker(shortResetTime)
+		delTime = time.NewTicker(shortDeletetime)
+	}
+	reset := resTime
+	quit := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case <-reset.C:
 				httpServer.ResetData()
-			})
+				break
+			case <-quit:
+				reset.Stop()
+				return
+			}
 		}
-		return nil
-	})
+	}()
 
-	//Deletes the data every day
-	wg.Go(func() error {
-		del := make(chan os.Signal, 1)
-		signal.Notify(del, syscall.SIGTERM, os.Interrupt)
-		doReset := true
-		select {
-		case <-del:
-			doReset = false
-		}
-		for doReset {
-			_ = time.AfterFunc(24*time.Hour, func() {
+	del := delTime
+	go func() {
+		for {
+			select {
+			case <-del.C:
 				httpServer.DeleteData()
-			})
+				break
+			case <-quit:
+				del.Stop()
+				return
+			}
 		}
-		return nil
-	})
+	}()
 
 	//Handle shutdown from SIGTERM
 	sigCh := make(chan os.Signal, 1)
@@ -92,6 +99,7 @@ func realMain() int {
 	select {
 	case <-sigCh:
 		log.Print("[DEBUG] Received SIGTERM signal, shutting down HTTP server\n")
+		close(quit)
 	case <-ctx.Done():
 	}
 

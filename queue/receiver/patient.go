@@ -8,10 +8,12 @@ import (
 	"github.com/pkg/errors"
 )
 
+//AddPatientReceiver defines methods for calling the service
 type AddPatientReceiver interface {
 	AddPatient([]byte)
 }
 
+//AddPatient adds a new patient to the system data store
 func (r *receiverCache) AddPatient(body []byte) {
 	log.Printf("found PAT")
 	patient := decodePAT(body)

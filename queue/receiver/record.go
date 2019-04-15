@@ -8,10 +8,12 @@ import (
 	"github.com/pkg/errors"
 )
 
+//AddRecordReceiver defines methods for adding records to the service
 type AddRecordReceiver interface {
 	AddRecord([]byte)
 }
 
+//AddRecord adds a new record to the system's data store
 func (r *receiverCache) AddRecord(body []byte) {
 	log.Printf("found RAR")
 	rec := decodeRAR(body)
