@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"golang.org/x/sync/errgroup"
 )
@@ -17,7 +18,7 @@ const (
 	exitOk = iota
 	exitError
 
-	httpPort int = 10001
+	httpPort int = 20001
 )
 
 func main() {
@@ -43,9 +44,47 @@ func realMain() int {
 	defer cancel()
 
 	//Go routines to run the following
-	//- Call the HTTP main to handle any HTTP requests
+	//- Call the HTTP Server to initialize the HTTP handlers
+	//- Initialize the receiver to consume messages from the handler
+	//- Call the reset function every hour
+	//- Call the delete function every 24 hours
 	wg, ctx := errgroup.WithContext(ctx)
 	wg.Go(func() error { return httpServer.Serve(httpLn) })
+	wg.Go(func() error { return httpServer.StartReceiver() })
+
+	//Resets the history every hour
+	wg.Go(func() error {
+		reset := make(chan os.Signal, 1)
+		signal.Notify(reset, syscall.SIGTERM, os.Interrupt)
+		doReset := true
+		select {
+		case <-reset:
+			doReset = false
+		}
+		for doReset {
+			_ = time.AfterFunc(60*time.Minute, func() {
+				httpServer.ResetData()
+			})
+		}
+		return nil
+	})
+
+	//Deletes the data every day
+	wg.Go(func() error {
+		del := make(chan os.Signal, 1)
+		signal.Notify(del, syscall.SIGTERM, os.Interrupt)
+		doReset := true
+		select {
+		case <-del:
+			doReset = false
+		}
+		for doReset {
+			_ = time.AfterFunc(24*time.Hour, func() {
+				httpServer.DeleteData()
+			})
+		}
+		return nil
+	})
 
 	//Handle shutdown from SIGTERM
 	sigCh := make(chan os.Signal, 1)

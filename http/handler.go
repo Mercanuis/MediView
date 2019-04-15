@@ -24,6 +24,22 @@ func (s *Server) getRecordsHandler() http.Handler {
 	})
 }
 
+func (s *Server) getHistoryHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+
+		histories := s.MediService.GetHistories()
+		if err := writeJSON(w, http.StatusOK, histories); err != nil {
+			s.handleError(w, err, FailedToGetHistory)
+			return
+		}
+		s.log.Print("Successfully performed GET of History")
+	})
+}
+
 func (s *Server) addPatientHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
@@ -39,13 +55,8 @@ func (s *Server) addPatientHandler() http.Handler {
 			s.handleError(w, err, FailedToAddPatient)
 			return
 		}
-
-		err = s.MediService.AddPatient(patient.Name, patient.Age)
-		if err != nil {
-			s.log.Printf("[Error] failed to add patient: %v\n", err)
-			s.handleError(w, err, FailedToAddPatient)
-			return
-		}
+		patient.Type = dto.TypePAR
+		s.sender.AddPatientSender(patient)
 
 		setContentType(w, http.StatusOK, "application/json; charset=UTF-8")
 		s.log.Print("Successfully performed POST of Patient")
@@ -68,78 +79,11 @@ func (s *Server) addRecordHandler() http.Handler {
 			return
 		}
 
-		patient, err := s.MediService.AddRecord(
-			record.ID,
-			record.Systolic,
-			record.Diastolic,
-			record.Pulse,
-			record.Glucose)
-		if err != nil {
-			s.log.Printf("[Error] failed to add patient record: %v\n", err)
-			s.handleError(w, err, FailedToAddRecord)
-		}
+		record.Type = dto.TypeRAR
+		s.sender.AddRecordSender(record)
 
-		if err := writeJSON(w, http.StatusOK, patient); err != nil {
-			s.handleError(w, err, FailedToAddRecord)
-			return
-		}
+		setContentType(w, http.StatusAccepted, "application/json; charset=UTF-8")
 		s.log.Print("Successfully performed POST of Record")
-	})
-}
-
-func (s *Server) getHistoryHandler() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-
-		histories := s.MediService.GetHistories()
-		if err := writeJSON(w, http.StatusOK, histories); err != nil {
-			s.handleError(w, err, FailedToGetHistory)
-			return
-		}
-		s.log.Print("Successfully performed GET of History")
-	})
-}
-
-func (s *Server) getHistoryResetHandler() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodDelete {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-
-		s.MediService.ResetHistory()
-
-		//return to verify reset occurred correctly
-		histories := s.MediService.GetHistories()
-
-		if err := writeJSON(w, http.StatusOK, histories); err != nil {
-			s.handleError(w, err, FailedToGetHistory)
-			return
-		}
-		s.log.Print("Successfully performed GET of History Reset")
-	})
-}
-
-func (s *Server) getHistoryDeleteHandler() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodDelete {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-
-		s.MediService.DeleteHistory()
-
-		//return to verify reset occurred correctly
-		histories := s.MediService.GetHistories()
-
-		if err := writeJSON(w, http.StatusOK, histories); err != nil {
-			s.handleError(w, err, FailedToGetHistory)
-			return
-		}
-		s.log.Print("Successfully performed GET of History Delete")
 	})
 }
 

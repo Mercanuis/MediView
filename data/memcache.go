@@ -40,13 +40,6 @@ func (m *MemCache) AddPatient(name string, age int) (uuid.UUID, error) {
 		return uuid.UUID{}, err
 	}
 
-	////TODO: is this possible with UUID? Will we ever reach this point?
-	//if _, exists := m.PatientList[key]; exists {
-	//	//key existed already
-	//	log.Print("Existing key")
-	//	return key, nil
-	//}
-
 	//Write to table
 	m.Lock()
 	defer m.Unlock()

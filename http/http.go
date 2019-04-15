@@ -1,6 +1,9 @@
 package http
 
 import (
+	"MediView/http/dto"
+	"MediView/queue"
+	"MediView/queue/receiver"
 	"MediView/service"
 	"context"
 	"log"
@@ -12,20 +15,24 @@ import (
 //Server represents the HTTP main
 type Server struct {
 	//Application specific logic and services
-	MediService service.Service
+	MediService *service.Service
 
 	//Third-party logic (HTTP, Logs)
-	log    *log.Logger
-	mux    *http.ServeMux
-	server *http.Server
+	log      *log.Logger
+	mux      *http.ServeMux
+	server   *http.Server
+	sender   queue.Sender
+	receiver receiver.Receiver
 }
 
 //New returns a new Service
-func New(s service.Service) (*Server, error) {
+func New(s *service.Service, r receiver.Receiver) (*Server, error) {
 	server := &Server{
 		MediService: s,
 		log:         log.New(os.Stderr, "", log.LstdFlags),
 		mux:         http.NewServeMux(),
+		sender:      queue.NewSender(),
+		receiver:    r,
 	}
 
 	server.registerHandlers()
@@ -37,8 +44,6 @@ func (s *Server) registerHandlers() {
 	s.mux.Handle("/addPatient", s.addPatientHandler())
 	s.mux.Handle("/addRecord", s.addRecordHandler())
 	s.mux.Handle("/getHistories", s.getHistoryHandler())
-	s.mux.Handle("/resetHistory", s.getHistoryResetHandler())
-	s.mux.Handle("/deleteHistory", s.getHistoryDeleteHandler())
 }
 
 // Serve starts accept requests from the given listener. If any returns error.
@@ -55,6 +60,22 @@ func (s *Server) Serve(ln net.Listener) error {
 	}
 
 	return nil
+}
+
+func (s *Server) StartReceiver() error {
+	return s.receiver.ConsumeFromQueue()
+}
+
+func (s *Server) ResetData() {
+	rhr := dto.ResetHistoryRequest{}
+	rhr.Type = dto.TypeRHR
+	s.sender.ResetHistorySender(rhr)
+}
+
+func (s *Server) DeleteData() {
+	dhr := dto.DeleteHistoryRequest{}
+	dhr.Type = dto.TypeDHR
+	s.sender.DeleteHistorySender(dhr)
 }
 
 // GracefulStop gracefully shuts down the main without interrupting any

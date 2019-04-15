@@ -20,7 +20,13 @@ func (c *containerImpl) GetHTTPServer() (*http.Server, error) {
 	if err != nil {
 		return nil, err
 	}
-	server, err := http.New(service)
+
+	receiver, err := c.GetReceiver()
+	if err != nil {
+		return nil, err
+	}
+
+	server, err := http.New(service, receiver)
 	if err != nil {
 		return nil, err
 	}
