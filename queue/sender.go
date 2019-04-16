@@ -2,8 +2,6 @@ package queue
 
 import (
 	"MediView/http/dto"
-	"bytes"
-	"encoding/gob"
 	"encoding/json"
 	"log"
 
@@ -70,12 +68,6 @@ func (s *senderCache) encodeMessage(data interface{}) ([]byte, error) {
 	marshaled, err := json.Marshal(data)
 	if err != nil {
 		onError(err, "[sender] failed to marshall data")
-	}
-	b := bytes.Buffer{}
-	e := gob.NewEncoder(&b)
-	err = e.Encode(data)
-	if err != nil {
-		return nil, err
 	}
 
 	return marshaled, nil
