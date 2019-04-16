@@ -73,7 +73,8 @@ This option allows for 'debugging' and shortens the timers on deletion/reset
     - Good support libraries in Golang
     - Reliability and flexible routing make it a good flexible choice
     - The ability to scale and federate in case the application needs to be used by a larger hospital makes scaling a possibility
-    - Considerations were make for **Kafka** and **Redis** but given the size and complexity of the application these felt like overkill
+    - Considerations were made for **Kafka** and **Redis** but given the size and complexity of the application these felt like overkill
+    - ***(Personal)*** Having never used a message queue, wanted to use it to show an ability to learn new technology
   
 The application initially comes to run with an in-memory cache, although it has been designed to where a different implementation (SQL, NoSQL) is possible
  - **Why Memcache?**
