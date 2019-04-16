@@ -24,8 +24,8 @@ const (
 	defaultResetTime  = 60 * time.Minute
 	defaultDeleteTime = 24 * time.Hour
 
-	shortResetTime  = 90 * time.Second
-	shortDeleteTime = 2 * time.Minute
+	shortResetTime  = 2 * time.Minute
+	shortDeleteTime = 5 * time.Minute
 )
 
 func main() {
@@ -37,7 +37,13 @@ func realMain(args []string) int {
 	container := di.NewContainer()
 	httpServer, err := container.GetHTTPServer()
 	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "[ERROR] Failed to setup new HTTP server: %s\n", err)
+		log.Fatalf("[ERROR] Failed to setup HTTP Server: %s\n", err)
+		return exitError
+	}
+
+	receiver, err := container.GetReceiver()
+	if err != nil {
+		log.Fatalf("[ERROR] Failed to setup queue: %s\n", err)
 		return exitError
 	}
 
@@ -49,10 +55,6 @@ func realMain(args []string) int {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-
-	//SIGTERM for goroutines
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, syscall.SIGTERM, os.Interrupt)
 
 	resTime := time.NewTicker(defaultResetTime)
 	delTime := time.NewTicker(defaultDeleteTime)
@@ -68,10 +70,13 @@ func realMain(args []string) int {
 	//- Call the delete function every 24 hours
 	wg, ctx := errgroup.WithContext(ctx)
 	wg.Go(func() error { return httpServer.Serve(httpLn) })
-	wg.Go(func() error { return httpServer.StartReceiver() })
+	wg.Go(func() error { return receiver.ConsumeFromQueue() })
 	wg.Go(func() error { return resetTimer(resTime, httpServer) })
 	wg.Go(func() error { return deleteTimer(delTime, httpServer) })
 
+	//SIGTERM for goroutines
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGTERM, os.Interrupt)
 	select {
 	case <-sigCh:
 		log.Print("[DEBUG] Received SIGTERM signal, shutting down HTTP server\n")

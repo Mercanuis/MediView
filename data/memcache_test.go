@@ -115,4 +115,6 @@ func TestPatientHistory(t *testing.T) {
 
 	history = cache.GetPatientHistories()
 	assert.Equal(t, 0, len(history.Histories))
+	patients = cache.GetPatients()
+	assert.Equal(t, 0, len(patients.Records))
 }

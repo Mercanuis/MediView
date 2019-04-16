@@ -133,6 +133,9 @@ func (m *MemCache) ResetPatientHistory() {
 
 //DeleteAllHistory removes all values and keys from memory cache for PatientVitalHistory
 func (m *MemCache) DeleteAllHistory() {
+	for k := range m.PatientList {
+		delete(m.PatientList, k)
+	}
 	for k := range m.PatientHistory {
 		delete(m.PatientHistory, k)
 	}

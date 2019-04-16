@@ -5,6 +5,9 @@ This is an application that was visualized first as a standalone HTTP server, bu
 usage of a message queue could be theoretically split into a front end and backend listening for
 messages. 
 
+## Design Diagram
+   ![](https://docs.google.com/drawings/d/e/2PACX-1vQiVkepAUPgA8TS-QgPP6phdQ9sf4q8OO5SyBZiuRekuYJxfOllXMkJ6WTO8kPA-vKnRXz9PTlBPory/pub?w=473&h=294)
+
 ## Packages
 
 - **cmd/main** - Logic to start up basic HTTP listener, helps to access HTTP handlers which call services
@@ -91,17 +94,26 @@ The application also makes used of Google's UUID library
         - messages are displayed when errors occur and allow the user to see problems. Are there problems that are fatal?
         - scope is limited it seems like: should a failure to have a patient added to the system result in a system shutdown?  
     - In theory now, http could be decoupled and moved to its own project. This would make the application flow a bit more complicated, would need to implement the logic and then update the README
-  
+        - For the sake of having all the code in one place, I want to keep this 'connected' for now, for sake of showing the work
+        - The question of the handler still calling the service for GETs seems like an issue for complete decoupling but not exactly impossible: perhaps a different http server for GET or to transmit the data in a different manner. 
+          
 ## Personal Evaluation and Project thoughts
- - 35+ commits was a lot (and more if and when I fix these minor issues). Commit wise I feel I could've been a bit more consistent with regards to good practices
+ - 37 commits was a lot (and more if and when I fix these minor issues). Commit wise I feel I could've been a bit more consistent with regards to good practices
     - Tests with every commit, trying not to do too much at once (small commits)
+    - Sometimes commits were rather big, as there was a substantial part of logic being made
+        - But they could be made smaller because these also came with 'quality' fixes that could've been made in other commits
  - The flow however felt natural, as I broke each part of the project into smaller pieces
     - First create the data, then create the service, then modify data if needed...etc.
+    - Tried to approach the problem in terms of milestones
+        - Get the HTTP server to respond, then get it to respond with a JSON body, and so on...
+    - When one method was verified, create the flow for a new one
+        - Then verify and test that as well
  - Learned a bit about
-    - RabbitMQ
+    - RabbitMQ, first real time using the message queue personally and having to implement from scratch
     - UUID
     - Golang (with respect to goroutines and libraries)
  - If I could do it over again I'd...
     - Work on the data and work my way up, much like I did here but with more refinement
     - Consider a standalone service in a smaller chunks, and sub projects. I feel that I could have done less commits this way
     - Work with a better idea of the smaller things (bash scripts, goroutines, etc)
+    

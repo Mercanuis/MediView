@@ -62,11 +62,6 @@ func (s *Server) Serve(ln net.Listener) error {
 	return nil
 }
 
-//StartReceiver initializes the server's receiver
-func (s *Server) StartReceiver() error {
-	return s.receiver.ConsumeFromQueue()
-}
-
 //ResetData adds a 'reset' message to the message queue
 func (s *Server) ResetData() {
 	rhr := dto.ResetHistoryRequest{}

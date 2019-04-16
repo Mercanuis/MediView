@@ -149,7 +149,7 @@ func TestAddRecordHandler(t *testing.T) {
 		},
 		"POST": {
 			httpMethod: http.MethodPost,
-			errorCode:  200,
+			errorCode:  202,
 			AddRequest: dto.RecordAddRequest{
 				Systolic:  128,
 				Diastolic: 70,
