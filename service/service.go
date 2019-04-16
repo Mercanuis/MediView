@@ -30,7 +30,7 @@ func (s *Service) GetLatestRecords() model.PatientRecords {
 func (s *Service) AddPatient(name string, age int) error {
 	err := s.data.AddPatient(name, age)
 	if err != nil {
-		return errors.Wrap(err, "failed to add patient to system")
+		return errors.Wrap(err, "[service] failed to add patient to system")
 	}
 	return nil
 }
@@ -40,7 +40,7 @@ func (s *Service) AddRecord(pid uuid.UUID, sys, dys, pul, glu int) (*model.Patie
 	vitals := model.NewVitals(sys, dys, pul, glu)
 	patient, err := s.data.AddRecord(pid, vitals)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to add a record for patient")
+		return nil, errors.Wrap(err, "[service] failed to add a record for patient")
 	}
 	return patient, nil
 }

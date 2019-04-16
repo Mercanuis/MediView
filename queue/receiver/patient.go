@@ -15,11 +15,11 @@ type AddPatientReceiver interface {
 
 //AddPatient adds a new patient to the system data store
 func (r *receiverCache) AddPatient(body []byte) {
-	log.Printf("found PAT")
+	log.Printf("[queue] request received for new patient")
 	patient := decodePAT(body)
 	err := r.service.AddPatient(patient.Name, patient.Age)
 	if err != nil {
-		log.Print(errors.Wrap(err, "failed to add patient"))
+		log.Print(errors.Wrap(err, "[add patient] failed to add patient"))
 	}
 }
 

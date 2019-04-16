@@ -87,11 +87,13 @@ The application also makes used of Google's UUID library
     - After 24 hours the keys are easily remade and doesn't impact the memcache that harshly 
 
  - **Considerations**
-    - Error handling needs to be improved: there are some simple enough messages to allow for flow of the data but need to be able to handle exceptions    
+    - Error handling needs to be improved
+        - messages are displayed when errors occur and allow the user to see problems. Are there problems that are fatal?
+        - scope is limited it seems like: should a failure to have a patient added to the system result in a system shutdown?  
     - In theory now, http could be decoupled and moved to its own project. This would make the application flow a bit more complicated, would need to implement the logic and then update the README
   
 ## Personal Evaluation and Project thoughts
- - 35 commits was a lot (and more if and when I fix these minor issues). Commit wise I feel I could've been a bit more consistent with regards to good practices
+ - 35+ commits was a lot (and more if and when I fix these minor issues). Commit wise I feel I could've been a bit more consistent with regards to good practices
     - Tests with every commit, trying not to do too much at once (small commits)
  - The flow however felt natural, as I broke each part of the project into smaller pieces
     - First create the data, then create the service, then modify data if needed...etc.

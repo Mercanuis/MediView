@@ -17,10 +17,10 @@ func (s *Server) getRecordsHandler() http.Handler {
 
 		records := s.MediService.GetLatestRecords()
 		if err := writeJSON(w, http.StatusOK, records); err != nil {
+			s.log.Printf("[http] failed to encode JSON body: %v\n", err)
 			s.handleError(w, err, FailedToGetRecords)
 			return
 		}
-		s.log.Print("Successfully performed GET of Records")
 	})
 }
 
@@ -33,10 +33,10 @@ func (s *Server) getHistoryHandler() http.Handler {
 
 		histories := s.MediService.GetHistories()
 		if err := writeJSON(w, http.StatusOK, histories); err != nil {
+			s.log.Printf("[http] failed to encode JSON body: %v\n", err)
 			s.handleError(w, err, FailedToGetHistory)
 			return
 		}
-		s.log.Print("Successfully performed GET of History")
 	})
 }
 
@@ -51,7 +51,7 @@ func (s *Server) addPatientHandler() http.Handler {
 		var patient dto.PatientAddRequest
 		err := decoder.Decode(&patient)
 		if err != nil {
-			s.log.Printf("[Error] failed to decode JSON body: %v\n", err)
+			s.log.Printf("[http] failed to decode JSON body: %v\n", err)
 			s.handleError(w, err, FailedToAddPatient)
 			return
 		}
@@ -59,7 +59,6 @@ func (s *Server) addPatientHandler() http.Handler {
 		s.sender.AddPatientSender(patient)
 
 		setContentType(w, http.StatusOK, "application/json; charset=UTF-8")
-		s.log.Print("Successfully performed POST of Patient")
 	})
 }
 
@@ -74,7 +73,7 @@ func (s *Server) addRecordHandler() http.Handler {
 		var record dto.RecordAddRequest
 		err := decoder.Decode(&record)
 		if err != nil {
-			s.log.Printf("[Error] failed to decode JSON body: %v\n", err)
+			s.log.Printf("[http] failed to decode JSON body: %v\n", err)
 			s.handleError(w, err, FailedToAddRecord)
 			return
 		}
@@ -83,14 +82,13 @@ func (s *Server) addRecordHandler() http.Handler {
 		s.sender.AddRecordSender(record)
 
 		setContentType(w, http.StatusAccepted, "application/json; charset=UTF-8")
-		s.log.Print("Successfully performed POST of Record")
 	})
 }
 
 func writeJSON(w http.ResponseWriter, code int, i interface{}) error {
 	setContentType(w, code, "application/json; charset=UTF-8")
 	if err := json.NewEncoder(w).Encode(i); err != nil {
-		return errors.Wrap(err, "unable to write JSON")
+		return errors.Wrap(err, "[http] unable to write JSON")
 	}
 	return nil
 }

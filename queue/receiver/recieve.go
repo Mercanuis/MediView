@@ -16,7 +16,7 @@ const (
 
 func onError(err error, msg string) {
 	if err != nil {
-		log.Printf("%s: %s", msg, err)
+		log.Printf("[queue] %s: %s", msg, err)
 	}
 }
 
@@ -46,28 +46,28 @@ func NewReceiver(s *service.Service) Receiver {
 //determine the message type to call the proper method in the service
 func (r *receiverCache) ConsumeFromQueue() error {
 	conn, err := amqp.Dial(queueURL)
-	onError(err, "Failed to connect to RabbitMQ")
+	onError(err, "[receive] failed to connect to RabbitMQ")
 	defer conn.Close()
 
 	ch, err := conn.Channel()
-	onError(err, "Failed to open a channel")
+	onError(err, "[receive] failed to open a channel")
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
 		queueName, false, false, false, false, nil,
 	)
-	onError(err, "Failed to declare a queue")
+	onError(err, "[receive] failed to declare a queue")
 
 	msgs, err := ch.Consume(
 		q.Name, "", true, false, false, false, nil,
 	)
-	onError(err, "Failed to register a consumer")
+	onError(err, "[receive] failed to register a consumer")
 
 	forever := make(chan bool)
 
 	go func() {
 		for d := range msgs {
-			log.Printf("Received a message: %s", d.Body)
+			log.Printf("[receive] received a message: %s", d.Body)
 			dt := decodeType(d.Body)
 			switch dt.Type {
 			case dto.TypePAR:
@@ -96,7 +96,7 @@ func decodeType(str []byte) dto.RequestType {
 	var d dto.RequestType
 	err := json.Unmarshal(str, &d)
 	if err != nil {
-		onError(err, "failed to decode message off queue")
+		onError(err, "[receive] failed to decode message off queue")
 	}
 
 	return d

@@ -15,11 +15,10 @@ type AddRecordReceiver interface {
 
 //AddRecord adds a new record to the system's data store
 func (r *receiverCache) AddRecord(body []byte) {
-	log.Printf("found RAR")
 	rec := decodeRAR(body)
 	_, err := r.service.AddRecord(rec.ID, rec.Systolic, rec.Diastolic, rec.Pulse, rec.Glucose)
 	if err != nil {
-		log.Print(errors.Wrap(err, "failed to add record"))
+		log.Print(errors.Wrap(err, "[add record] failed to add record"))
 	}
 }
 

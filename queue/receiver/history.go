@@ -13,14 +13,14 @@ type HistoryReceiver interface {
 
 //ResetHistory resets the service's history
 func (r *receiverCache) ResetHistory() {
-	log.Printf("found RHR")
+	log.Printf("[queue] recieved request to reset patient history")
 	r.service.ResetHistory()
-	log.Printf("History for service successfully reset")
+	log.Printf("[queue] patient history successfully reset")
 }
 
 //DeleteHistory deletes the service's history
 func (r *receiverCache) DeleteHistory() {
-	log.Printf("found DHR")
+	log.Printf("[queue] received request to delete patient history")
 	r.service.DeleteHistory()
-	log.Print("History for service successfully deleted")
+	log.Print("[queue] patient history successfully deleted")
 }
