@@ -15,10 +15,16 @@ test:
 coverage:
 	@go test -race -coverpkg=./... -coverprofile=coverage.txt ./...
 
+.PHONY: rabbit
+rabbit:
+	rabbitmq-server
+
 .PHONY: main
 main:
-	@go run ./cmd/main/main.go
+	rabbitmq-server &
+	sleep 5 && go run ./cmd/main/main.go
 
 .PHONY: main-short
 main-short:
-	@go run ./cmd/main/main.go short
+	rabbitmq-server &
+	sleep 5 && go run ./cmd/main/main.go short

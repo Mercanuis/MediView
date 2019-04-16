@@ -18,9 +18,9 @@ messages.
 There is a provided Makefile. This application uses **dep** to ensure the packages its dependent on
 are provided. To ensure the packages go to where the application was cloned to and run
 
-``
+```bash
 make dep
-``
+```
   
 To run the application RabbitMQ should be initialized. To run locally, you can do the following using HomeBrew (for additional instructions for different tools, refer to [the installation guide](https://www.rabbitmq.com/download.html))
 
@@ -36,13 +36,18 @@ export PATH=$PATH:/usr/local/opt/rabbitmq/sbin
 
 Then run the server with
 ```bash
-rabbitmq-server
+make rabbit
 ```
 
 Once all the tools are in place you can initialize the server in a shell by doing
 ```bash
-make main [short] //This option allows for 'debugging' and shortens the timers on deletion/reset
+make main
 ```
+Or
+```bash
+make main-short 
+```
+This option allows for 'debugging' and shortens the timers on deletion/reset
 
 ## Design Choices
 **dep** is used by **Go**
@@ -78,11 +83,23 @@ The application initially comes to run with an in-memory cache, although it has 
 The application also makes used of Google's UUID library
  - **Why UUID?**
     - Uniqueness of the key allows for no collisions to occur in the system
-        - Rand was considered, but the library is only 'pseudo-random' and wouldn't make for a good key
+        - Rand was considered, but the library is only 'pseudo-random' and wouldn't make for a good key strategy in case of scale
     - After 24 hours the keys are easily remade and doesn't impact the memcache that harshly 
 
  - **Considerations**
-    - Implementing a rule in Makefile to allow for the initialization of RabbitMQ and the service seems like an easy enough change
-    - Error handling needs to be improved: there are some simple enough messages to allow for flow of the data but need to be able to handle exceptions
+    - Error handling needs to be improved: there are some simple enough messages to allow for flow of the data but need to be able to handle exceptions    
     - In theory now, http could be decoupled and moved to its own project. This would make the application flow a bit more complicated, would need to implement the logic and then update the README
-    
+  
+## Personal Evaluation and Project thoughts
+ - 35 commits was a lot (and more if and when I fix these minor issues). Commit wise I feel I could've been a bit more consistent with regards to good practices
+    - Tests with every commit, trying not to do too much at once (small commits)
+ - The flow however felt natural, as I broke each part of the project into smaller pieces
+    - First create the data, then create the service, then modify data if needed...etc.
+ - Learned a bit about
+    - RabbitMQ
+    - UUID
+    - Golang (with respect to goroutines and libraries)
+ - If I could do it over again I'd...
+    - Work on the data and work my way up, much like I did here but with more refinement
+    - Consider a standalone service in a smaller chunks, and sub projects. I feel that I could have done less commits this way
+    - Work with a better idea of the smaller things (bash scripts, goroutines, etc)

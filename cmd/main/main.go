@@ -2,6 +2,7 @@ package main
 
 import (
 	"MediView/di"
+	"MediView/http"
 	"context"
 	"fmt"
 	"log"
@@ -24,7 +25,7 @@ const (
 	defaultDeleteTime = 24 * time.Hour
 
 	shortResetTime  = 90 * time.Second
-	shortDeletetime = 2 * time.Minute
+	shortDeleteTime = 2 * time.Minute
 )
 
 func main() {
@@ -49,6 +50,17 @@ func realMain(args []string) int {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	//SIGTERM for goroutines
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGTERM, os.Interrupt)
+
+	resTime := time.NewTicker(defaultResetTime)
+	delTime := time.NewTicker(defaultDeleteTime)
+	if len(args) != 1 && args[1] == "short" {
+		resTime = time.NewTicker(shortResetTime)
+		delTime = time.NewTicker(shortDeleteTime)
+	}
+
 	//Go routines to run the following
 	//- Call the HTTP Server to initialize the HTTP handlers
 	//- Initialize the receiver to consume messages from the handler
@@ -57,61 +69,18 @@ func realMain(args []string) int {
 	wg, ctx := errgroup.WithContext(ctx)
 	wg.Go(func() error { return httpServer.Serve(httpLn) })
 	wg.Go(func() error { return httpServer.StartReceiver() })
+	wg.Go(func() error { return resetTimer(resTime, httpServer) })
+	wg.Go(func() error { return deleteTimer(delTime, httpServer) })
 
-	resTime := time.NewTicker(defaultResetTime)
-	delTime := time.NewTicker(defaultDeleteTime)
-	if args[1] == "short" {
-		resTime = time.NewTicker(shortResetTime)
-		delTime = time.NewTicker(shortDeletetime)
-	}
-	reset := resTime
-	quit := make(chan struct{})
-	go func() {
-		for {
-			select {
-			case <-reset.C:
-				httpServer.ResetData()
-				break
-			case <-quit:
-				reset.Stop()
-				return
-			}
-		}
-	}()
-
-	del := delTime
-	go func() {
-		for {
-			select {
-			case <-del.C:
-				httpServer.DeleteData()
-				break
-			case <-quit:
-				del.Stop()
-				return
-			}
-		}
-	}()
-
-	//Handle shutdown from SIGTERM
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, syscall.SIGTERM, os.Interrupt)
 	select {
 	case <-sigCh:
 		log.Print("[DEBUG] Received SIGTERM signal, shutting down HTTP server\n")
-		close(quit)
+		if err := httpServer.GracefulStop(ctx); err != nil {
+			log.Fatalf("[ERROR] Failed to gracefully shutdown HTTP Server: %s\n", err)
+		}
+		log.Print("Http shut down, finished")
+		break
 	case <-ctx.Done():
-	}
-
-	// Gracefully shutdown HTTP main.
-	if err := httpServer.GracefulStop(ctx); err != nil {
-		log.Fatalf("[ERROR] Failed to gracefully shutdown HTTP Server: %s\n", err)
-	}
-
-	cancel()
-	if err := wg.Wait(); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "[ERROR] unhandled error received: %s\n", err)
-		return exitError
 	}
 
 	return exitOk
@@ -120,4 +89,22 @@ func realMain(args []string) int {
 func setupListener(port int) (net.Listener, error) {
 	addr := fmt.Sprintf(":%d", port)
 	return net.Listen("tcp", addr)
+}
+
+func resetTimer(t *time.Ticker, s *http.Server) error {
+	for {
+		select {
+		case <-t.C:
+			s.ResetData()
+		}
+	}
+}
+
+func deleteTimer(t *time.Ticker, s *http.Server) error {
+	for {
+		select {
+		case <-t.C:
+			s.DeleteData()
+		}
+	}
 }
