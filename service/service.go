@@ -1,8 +1,8 @@
 package service
 
 import (
-	"MediView/data"
-	"MediView/data/model"
+	"github.com/MediView/data"
+	"github.com/MediView/data/model"
 
 	"github.com/pkg/errors"
 

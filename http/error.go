@@ -1,9 +1,10 @@
 package http
 
 import (
-	"MediView/http/dto"
 	"encoding/json"
 	"net/http"
+
+	"github.com/MediView/http/dto"
 )
 
 const (

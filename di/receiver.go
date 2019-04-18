@@ -1,7 +1,7 @@
 package di
 
 import (
-	"MediView/queue/receiver"
+	"github.com/MediView/queue/receiver"
 )
 
 //ReceiverProvider defines the interface of providing a Receiver

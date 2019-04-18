@@ -1,9 +1,10 @@
 package data
 
 import (
-	"MediView/data/model"
 	"sort"
 	"testing"
+
+	"github.com/MediView/data/model"
 
 	"gotest.tools/assert"
 )

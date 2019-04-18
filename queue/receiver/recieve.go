@@ -1,10 +1,11 @@
 package receiver
 
 import (
-	"MediView/http/dto"
-	"MediView/service"
 	"encoding/json"
 	"log"
+
+	"github.com/MediView/http/dto"
+	"github.com/MediView/service"
 
 	"github.com/streadway/amqp"
 )

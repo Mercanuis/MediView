@@ -1,7 +1,7 @@
 package di
 
 import (
-	"MediView/service"
+	"github.com/MediView/service"
 )
 
 //MediServiceProvider defines the interface of providing a MediService instance

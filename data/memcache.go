@@ -1,8 +1,9 @@
 package data
 
 import (
-	"MediView/data/model"
 	"sync"
+
+	"github.com/MediView/data/model"
 
 	"github.com/pkg/errors"
 

@@ -1,15 +1,16 @@
 package http
 
 import (
-	"MediView/http/dto"
-	"MediView/queue"
-	"MediView/queue/receiver"
-	"MediView/service"
 	"context"
 	"log"
 	"net"
 	"net/http"
 	"os"
+
+	"github.com/MediView/http/dto"
+	"github.com/MediView/queue"
+	"github.com/MediView/queue/receiver"
+	"github.com/MediView/service"
 )
 
 //Server represents the HTTP main

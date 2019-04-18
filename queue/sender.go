@@ -1,9 +1,10 @@
 package queue
 
 import (
-	"MediView/http/dto"
 	"encoding/json"
 	"log"
+
+	"github.com/MediView/http/dto"
 
 	"github.com/streadway/amqp"
 )

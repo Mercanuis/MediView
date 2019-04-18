@@ -1,7 +1,7 @@
 package di
 
 import (
-	"MediView/http"
+	"github.com/MediView/http"
 )
 
 // HTTPServerProvider defines the interface of providing a HTTP server

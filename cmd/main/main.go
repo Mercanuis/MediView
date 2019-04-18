@@ -1,8 +1,6 @@
 package main
 
 import (
-	"MediView/di"
-	"MediView/http"
 	"context"
 	"fmt"
 	"log"
@@ -11,6 +9,9 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/MediView/di"
+	"github.com/MediView/http"
 
 	"golang.org/x/sync/errgroup"
 )

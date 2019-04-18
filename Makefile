@@ -28,3 +28,13 @@ main:
 main-short:
 	rabbitmq-server &
 	sleep 5 && go run ./cmd/main/main.go short
+
+.PHONY: build
+build: dep
+	CGO_ENABLED=0 go build \
+		-o bin/mediview \
+        Mediview/cmd/main
+
+.PHONY: docker
+docker: dep && build
+	docker build -t mediview .

@@ -1,16 +1,17 @@
 package http
 
 import (
-	"MediView/data/model"
-	"MediView/http/dto"
-	"MediView/http/mocks"
-	"MediView/queue/receiver"
-	"MediView/service"
 	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/MediView/data/model"
+	"github.com/MediView/http/dto"
+	"github.com/MediView/http/mocks"
+	"github.com/MediView/queue/receiver"
+	"github.com/MediView/service"
 
 	"github.com/pkg/errors"
 

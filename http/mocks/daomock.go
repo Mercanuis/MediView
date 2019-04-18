@@ -1,7 +1,7 @@
 package mocks
 
 import (
-	"MediView/data/model"
+	"github.com/MediView/data/model"
 
 	"github.com/google/uuid"
 )

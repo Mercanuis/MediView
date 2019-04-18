@@ -1,10 +1,10 @@
 package di
 
 import (
-	"MediView/data"
-	"MediView/http"
-	"MediView/queue/receiver"
-	"MediView/service"
+	"github.com/MediView/data"
+	"github.com/MediView/http"
+	"github.com/MediView/queue/receiver"
+	"github.com/MediView/service"
 )
 
 //Container is an interface that defines the methods a Container needs

@@ -1,14 +1,15 @@
 package http
 
 import (
-	"MediView/data"
-	"MediView/queue/receiver"
-	"MediView/service"
 	"context"
 	"fmt"
 	"net"
 	"net/http"
 	"testing"
+
+	"github.com/MediView/data"
+	"github.com/MediView/queue/receiver"
+	"github.com/MediView/service"
 
 	"gotest.tools/assert"
 )

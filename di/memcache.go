@@ -1,7 +1,7 @@
 package di
 
 import (
-	"MediView/data"
+	"github.com/MediView/data"
 )
 
 //MemcacheProvider defines the interface of providing a memory cache
