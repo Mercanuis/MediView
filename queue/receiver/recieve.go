@@ -12,7 +12,7 @@ import (
 
 const (
 	queueName = "MEDIVIEW"
-	queueURL  = "amqp://guest:guest@localhost:5672/"
+	queueURL  = "rabbitmq"
 )
 
 func onError(err error, msg string) {

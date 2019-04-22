@@ -4,13 +4,18 @@ LABEL author="Joseph Orme <brogramn@gmail.com>"
 
 WORKDIR $GOPATH/src/github.com/MediView
 
-COPY . .
+COPY . ./
 
-RUN echo "starting installation"
-RUN go get -d -v ./...
 RUN go install -v ./...
-RUN echo "installtion complete"
 
-EXPOSE 20001
+RUN go build ./...
 
-CMD ["bin/mediview"]
+RUN \
+	make build && \
+	cp bin/mediview /go/bin/mediview
+
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+COPY --from=0 /go/bin/mediview /bin/mediview
+
+CMD ["mediview"]

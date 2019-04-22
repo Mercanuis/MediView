@@ -11,7 +11,7 @@ import (
 
 const (
 	queueName = "MEDIVIEW"
-	queueURL  = "amqp://guest:guest@localhost:5672/"
+	queueURL  = "rabbitmq"
 )
 
 //Sender is an interface to define calling the message queue to add a message

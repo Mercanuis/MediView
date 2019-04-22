@@ -5,7 +5,7 @@ $(GOPATH)/bin/dep:
 
 .PHONY: dep
 dep: $(GOPATH)/bin/dep
-	@dep ensure -v
+	@go build ./...
 
 .PHONY: test
 test:
@@ -31,9 +31,7 @@ main-short:
 
 .PHONY: build
 build: dep
-	CGO_ENABLED=0 go build \
-		-o bin/mediview \
-        Mediview/cmd/main
+	CGO_ENABLED=0 go build -o bin/mediview ../MediView/cmd/main/
 
 .PHONY: docker
 docker: dep && build

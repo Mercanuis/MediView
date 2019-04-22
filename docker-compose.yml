@@ -2,15 +2,16 @@ version: '3'
 #define 2 services: web and rabbit
 services:
   rabbitmq:
-    image: "rabbitmq:3-management"
+    image: "rabbitmq:3.7-alpine"
     hostname: "rabbit"
     ports:
-      - "15672:15672"
       - "5672:5672"
     labels:
       NAME: "rabbitmq"
   mediview:
     build: .
+    depends_on:
+      - rabbitmq
     ports:
       - "20001:20001"
     volumes:
